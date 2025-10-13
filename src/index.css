@@ -1,0 +1,520 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* ========================================
+     LAYOUT & CONTAINERS
+     ======================================== */
+  
+  .page-container {
+    @apply space-y-6;
+  }
+
+  .content-wrapper {
+    @apply mx-auto max-w-7xl;
+  }
+
+  .container_form {
+    @apply mt-5 space-y-6 border border-gray-300 rounded-lg p-5;
+  }
+
+  /* ========================================
+     CARDS & PANELS
+     ======================================== */
+  
+  .card-modern {
+    @apply bg-white rounded-lg border shadow-sm overflow-hidden;
+  }
+
+  .card-header-section {
+    @apply bg-white border rounded-lg p-5;
+  }
+
+  .card-filter {
+    @apply bg-white rounded-lg border p-4;
+  }
+
+  .card-empty-state {
+    @apply bg-white rounded-lg border p-12 text-center;
+  }
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+  
+  .page-title {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply text-muted-foreground mt-2;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold;
+  }
+
+  .card-title {
+    @apply text-lg font-semibold mb-2;
+  }
+
+  .text-secondary {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* ========================================
+     BUTTONS
+     ======================================== */
+  
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white transition-colors;
+  }
+
+  .btn-success {
+    @apply bg-green-600 hover:bg-green-700 text-white transition-colors;
+  }
+
+  .btn-danger {
+    @apply text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors;
+  }
+
+  .btn-danger-solid {
+    @apply bg-red-600 hover:bg-red-700 text-white transition-colors;
+  }
+
+  .btn-restore {
+    @apply text-green-600 hover:text-green-700 hover:bg-green-50 transition-colors;
+  }
+
+  .btn-icon {
+    @apply h-8 w-8 p-0;
+  }
+
+  /* ========================================
+     TABLES
+     ======================================== */
+  
+  .table-header-row {
+    @apply bg-gray-50;
+  }
+
+  .table-row-hover {
+    @apply hover:bg-gray-50 transition-colors;
+  }
+
+  .table-cell-center {
+    @apply font-medium text-center;
+  }
+
+  .table-cell-actions {
+    @apply text-right;
+  }
+
+  /* ========================================
+     LOADING STATES
+     ======================================== */
+  
+  .loading-spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-primary;
+  }
+
+  .loading-spinner-lg {
+    @apply animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600;
+  }
+
+  .loading-container {
+    @apply flex items-center justify-center py-8;
+  }
+
+  /* ========================================
+     EMPTY STATES
+     ======================================== */
+  
+  .empty-state-icon {
+    @apply h-12 w-12 text-gray-400 mx-auto mb-4;
+  }
+
+  .empty-state-title {
+    @apply text-lg font-medium text-gray-900 mb-2;
+  }
+
+  .empty-state-description {
+    @apply text-gray-500;
+  }
+
+  /* ========================================
+     FORMS
+     ======================================== */
+  
+  .form-section {
+    @apply space-y-4;
+  }
+
+  .form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .form-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-4;
+  }
+
+  .form-field {
+    @apply space-y-2;
+  }
+
+  .form-error {
+    @apply text-sm text-red-600;
+  }
+
+  .form-help-text {
+    @apply text-sm text-gray-500;
+  }
+
+  /* ========================================
+     SEARCH & FILTERS
+     ======================================== */
+  
+  .search-container {
+    @apply flex gap-2;
+  }
+
+  .search-input-wrapper {
+    @apply flex-1 min-w-[300px];
+  }
+
+  .filter-group {
+    @apply flex gap-4 flex-wrap;
+  }
+
+  /* ========================================
+     BADGES & STATUS
+     ======================================== */
+  
+  .badge-status {
+    @apply inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium;
+  }
+
+  .status-active {
+    @apply text-green-600 border-green-600;
+  }
+
+  .status-inactive {
+    @apply text-gray-500 border-gray-300;
+  }
+
+  .status-danger {
+    @apply text-red-600 border-red-600;
+  }
+
+  /* ========================================
+     HIGHLIGHTS & COLORS
+     ======================================== */
+  
+  .highlight-success {
+    @apply bg-green-100 font-semibold text-green-800;
+  }
+
+  .highlight-warning {
+    @apply bg-orange-100 font-semibold text-orange-800;
+  }
+
+  .highlight-info {
+    @apply bg-blue-100 font-semibold text-blue-800;
+  }
+
+  .highlight-muted {
+    @apply bg-gray-100 text-gray-600;
+  }
+
+  /* ========================================
+     ERROR MESSAGES
+     ======================================== */
+  
+  .error-card {
+    @apply border-red-200 bg-red-50;
+  }
+
+  .error-content {
+    @apply flex items-center gap-2 text-red-600;
+  }
+
+  .error-message {
+    @apply p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md;
+  }
+
+  /* ========================================
+     PAGINATION
+     ======================================== */
+  
+  .pagination-container {
+    @apply flex items-center justify-between mt-4;
+  }
+
+  .pagination-info {
+    @apply text-sm text-gray-700;
+  }
+
+  .pagination-buttons {
+    @apply flex items-center gap-2;
+  }
+
+  .pagination-page-number {
+    @apply w-8 h-8 p-0;
+  }
+
+  /* ========================================
+     HEADER SECTIONS
+     ======================================== */
+  
+  .page-header {
+    @apply flex justify-between items-center mb-6;
+  }
+
+  .page-header-full {
+    @apply flex items-center justify-between;
+  }
+
+  .page-header-title-section {
+    @apply flex items-center gap-2;
+  }
+
+  .page-header-actions {
+    @apply flex gap-2;
+  }
+
+  /* ========================================
+     INVOICE SPECIFIC
+     ======================================== */
+  
+  .invoice-summary-table {
+    @apply bg-white rounded-lg border shadow-sm overflow-hidden;
+  }
+
+  .invoice-item-table {
+    @apply bg-white rounded-lg border shadow-sm overflow-hidden;
+  }
+
+  .invoice-quantity-controls {
+    @apply flex items-center gap-1;
+  }
+
+  .invoice-radio-group {
+    @apply flex flex-col items-center;
+  }
+
+  /* ========================================
+     CODE & MONOSPACE
+     ======================================== */
+  
+  .code-block {
+    @apply text-xs bg-muted px-1 py-0.5 rounded font-mono;
+  }
+
+  .code-inline {
+    @apply text-xs text-gray-600 font-mono break-all;
+  }
+}
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+.sidebar_user {
+  @apply text-sm text-gray-600 mb-2 bg-gray-100;
+}
+
+.sidebar_btn_logout {
+  @apply cursor-pointer bg-red-50 text-red-700 transition-all hover:bg-red-100 hover:text-red-600;
+}
+
+/* ========================================
+   CONFIGURATION
+   ======================================== */
+.container_configuration {
+  h1 {
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  .error {
+    @apply p-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md;
+  }
+
+  .btn_cancel {
+    @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors;
+  }
+
+  .btn_submit {
+    @apply px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors;
+  }
+}
+
+/* ========================================
+   LOGIN
+   ======================================== */
+.container_login {
+  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8;
+
+  h1 {
+    @apply mt-6 text-3xl font-bold text-gray-900;
+  }
+
+  h2 {
+    @apply mt-2 text-sm text-gray-600;
+  }
+
+  .content_login {
+    @apply max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl;
+  }
+
+  .btn_submit {
+    @apply w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:shadow-lg;
+  }
+
+  .logo {
+    @apply mx-auto h-16 w-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg;
+  }
+
+  .logo_icon {
+    @apply h-10 w-10 text-white;
+  }
+
+  .error {
+    @apply bg-red-50 border border-red-200 rounded-md p-4;
+  }
+
+  .error_text {
+    @apply text-sm text-red-600;
+  }
+}
+
+/* ========================================
+   LOADING
+   ======================================== */
+.container_loading {
+  @apply min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100;
+
+  .content_loading {
+    @apply animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600;
+  }
+}

@@ -1,0 +1,695 @@
+{
+  "info": {
+    "name": "Clientes API - Sistema de Facturación",
+    "description": "API REST para gestión de clientes con autenticación por tokens de empresa + Panel Admin",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "api_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Empresas",
+      "item": [
+        {
+          "name": "Crear Empresa (Público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('api_token', jsonData.data.api_token);",
+                  "    console.log('Token guardado:', jsonData.data.api_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Mi Empresa S.A.\",\n  \"email\": \"contacto@miempresa.com\",\n  \"ruc\": \"80012345-6\",\n  \"telefono\": \"021500100\",\n  \"direccion\": \"Avda. España 1234, Asunción\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/empresas",
+              "host": ["{{base_url}}"],
+              "path": ["empresas"]
+            },
+            "description": "Crea una nueva empresa y genera automáticamente su token de API. Este endpoint NO requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Empresas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/empresas",
+              "host": ["{{base_url}}"],
+              "path": ["empresas"]
+            },
+            "description": "Obtiene la lista de todas las empresas activas"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Empresa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/empresas/1",
+              "host": ["{{base_url}}"],
+              "path": ["empresas", "1"]
+            },
+            "description": "Obtiene los datos de una empresa específica por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Empresa",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"021999888\",\n  \"direccion\": \"Nueva Dirección 5678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/empresas/1",
+              "host": ["{{base_url}}"],
+              "path": ["empresas", "1"]
+            },
+            "description": "Actualiza los datos de una empresa"
+          },
+          "response": []
+        },
+        {
+          "name": "Regenerar Token",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/empresas/1/regenerate-token",
+              "host": ["{{base_url}}"],
+              "path": ["empresas", "1", "regenerate-token"]
+            },
+            "description": "Genera un nuevo token de API para la empresa. El token anterior dejará de funcionar."
+          },
+          "response": []
+        },
+        {
+          "name": "Activar/Desactivar Empresa",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/empresas/1/toggle-active",
+              "host": ["{{base_url}}"],
+              "path": ["empresas", "1", "toggle-active"]
+            },
+            "description": "Activa o desactiva una empresa. Las empresas inactivas no pueden usar la API."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Empresa (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/empresas/1",
+              "host": ["{{base_url}}"],
+              "path": ["empresas", "1"]
+            },
+            "description": "Marca una empresa como eliminada (soft delete). No se elimina físicamente."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gestionar empresas y sus tokens de autenticación"
+    },
+    {
+      "name": "Clientes (Por Empresa)",
+      "item": [
+        {
+          "name": "Crear Cliente - Persona Física",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan Carlos Pérez\",\n  \"tipo_persona\": \"fisica\",\n  \"ci\": \"12345678\",\n  \"fecha_nacimiento\": \"1990-05-15\",\n  \"telefono\": \"0981123456\",\n  \"email\": \"juan.perez@example.com\",\n  \"direccion\": \"Avda. España 1234, Asunción\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"]
+            },
+            "description": "Crea un cliente de tipo persona física. La CI es obligatoria. Se asigna automáticamente a tu empresa."
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Cliente - Persona Física con RUC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"María González López\",\n  \"tipo_persona\": \"fisica\",\n  \"ci\": \"87654321\",\n  \"tiene_ruc\": 1,\n  \"ruc\": \"2992141-4\",\n  \"telefono\": \"0982987654\",\n  \"email\": \"maria.gonzalez@example.com\",\n  \"direccion\": \"Avda. Mariscal López 567\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"]
+            },
+            "description": "Crea un cliente persona física que también tiene RUC"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Cliente - Persona Jurídica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora del Este S.A.\",\n  \"tipo_persona\": \"juridica\",\n  \"ruc\": \"80012345-6\",\n  \"telefono\": \"021500100\",\n  \"email\": \"contacto@constructora.com.py\",\n  \"direccion\": \"Avda. Aviadores del Chaco 2000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"]
+            },
+            "description": "Crea un cliente de tipo persona jurídica (empresa). El RUC es obligatorio."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Mis Clientes (con paginación)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Clientes por página"
+                }
+              ]
+            },
+            "description": "Lista SOLO los clientes de tu empresa con paginación"
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar en Mis Clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes?search=Juan&page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Juan",
+                  "description": "Buscar por nombre, CI, RUC o email"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Busca clientes solo dentro de tu empresa por nombre, CI, RUC o email"
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar por Tipo de Persona",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes?tipo_persona=fisica",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"],
+              "query": [
+                {
+                  "key": "tipo_persona",
+                  "value": "fisica",
+                  "description": "fisica o juridica"
+                }
+              ]
+            },
+            "description": "Filtra clientes de tu empresa por tipo de persona (fisica o juridica)"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Cliente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", "1"]
+            },
+            "description": "Obtiene los datos de un cliente de tu empresa"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Cliente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"0981999888\",\n  \"email\": \"nuevo.email@example.com\",\n  \"direccion\": \"Nueva dirección 123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/clientes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", "1"]
+            },
+            "description": "Actualiza los datos de un cliente de tu empresa"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Cliente (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/1",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", "1"]
+            },
+            "description": "Marca un cliente como eliminado sin borrarlo de la base de datos"
+          },
+          "response": []
+        },
+        {
+          "name": "Restaurar Cliente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/1/restore",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", "1", "restore"]
+            },
+            "description": "Restaura un cliente previamente eliminado"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mis Clientes Eliminados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes?eliminado=1",
+              "host": ["{{base_url}}"],
+              "path": ["clientes"],
+              "query": [
+                {
+                  "key": "eliminado",
+                  "value": "1",
+                  "description": "1 para eliminados, 0 para activos"
+                }
+              ]
+            },
+            "description": "Lista los clientes de tu empresa que han sido eliminados (soft delete)"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Permanentemente (Hard Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Token",
+                "value": "{{api_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clientes/1/hard",
+              "host": ["{{base_url}}"],
+              "path": ["clientes", "1", "hard"]
+            },
+            "description": "⚠️ ELIMINA PERMANENTEMENTE un cliente de la base de datos. Esta acción NO se puede deshacer."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para gestionar clientes de TU empresa (requiere token, filtra automáticamente por empresa)"
+    },
+    {
+      "name": "🔧 Admin - Todos los Clientes",
+      "item": [
+        {
+          "name": "Listar TODOS los Clientes (Global)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/clientes/all?page=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clientes", "all"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Número de página"
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Clientes por página"
+                }
+              ]
+            },
+            "description": "⚠️ ADMIN: Lista TODOS los clientes de TODAS las empresas. No requiere token. Sin filtro de empresa."
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar en TODOS los Clientes (Global)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/clientes/all?search=María&page=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clientes", "all"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "María",
+                  "description": "Buscar por nombre, CI, RUC o email en TODAS las empresas"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "⚠️ ADMIN: Busca en TODOS los clientes de TODAS las empresas"
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar TODOS por Tipo de Persona",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/clientes/all?tipo_persona=juridica&page=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clientes", "all"],
+              "query": [
+                {
+                  "key": "tipo_persona",
+                  "value": "juridica",
+                  "description": "fisica o juridica"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "⚠️ ADMIN: Filtra por tipo de persona en TODAS las empresas"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver TODOS los Clientes Eliminados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/clientes/all?eliminado=1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clientes", "all"],
+              "query": [
+                {
+                  "key": "eliminado",
+                  "value": "1",
+                  "description": "1 para eliminados de todas las empresas"
+                }
+              ]
+            },
+            "description": "⚠️ ADMIN: Lista todos los clientes eliminados de todas las empresas"
+          },
+          "response": []
+        },
+        {
+          "name": "Clientes de una Empresa Específica",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/clientes/by-empresa/1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "clientes", "by-empresa", "1"]
+            },
+            "description": "⚠️ ADMIN: Obtiene todos los clientes de una empresa específica"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Empresas con Totales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/empresas",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "empresas"]
+            },
+            "description": "⚠️ ADMIN: Lista todas las empresas con el total de clientes de cada una"
+          },
+          "response": []
+        },
+        {
+          "name": "Estadísticas Generales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "stats"]
+            },
+            "description": "⚠️ ADMIN: Obtiene estadísticas generales del sistema (total empresas, clientes, desglose por empresa)"
+          },
+          "response": []
+        }
+      ],
+      "description": "⚠️ Endpoints administrativos para ver TODOS los clientes sin filtro de empresa. NO requieren autenticación (proteger en producción)."
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Verifica que la API esté funcionando (endpoint público)"
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{api_token}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "X-API-Token",
+        "type": "string"
+      }
+    ]
+  }
+}

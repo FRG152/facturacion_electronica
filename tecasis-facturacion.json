@@ -1,0 +1,458 @@
+{
+  "info": {
+    "name": "tecasis-facturacion",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Configurar emisor",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://carlos-benitez.tecasispy.com/emisor",
+          "protocol": "http",
+          "host": [
+            "carlos-benitez",
+            "tecasispy",
+            "com"
+          ],
+          "path": [
+            "emisor"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"version\": 150,\n  \"ruc\": \"2992141-4\",\n  \"razonSocial\": \"BENITEZ GAMARRA CARLOS VICTOR\",\n  \"nombreFantasia\": \"TECASIS SOLUCIONES TECNOLOGICAS.\",\n  \"actividadesEconomicas\": [\n    {\n      \"codigo\": \"62010\",\n      \"descripcion\": \"Actividades de programación informática\"\n    }\n  ],\n  \"timbradoNumero\": \"18067572\",\n  \"timbradoFecha\": \"2025-05-31\",\n  \"tipoContribuyente\": 1,\n  \"tipoRegimen\": 8,\n  \"establecimientos\": [\n    {\n      \"codigo\": \"001\",\n      \"direccion\": \"BENIGNO FERREIRA, A 200 METROS DE LA AVDA. DIP. JULIO CESAR RIQUELME\",\n      \"numeroCasa\": \"0\",\n      \"complementoDireccion1\": \"Entre calle 2\",\n      \"complementoDireccion2\": \"y Calle 7\",\n      \"departamento\": 11,\n      \"departamentoDescripcion\": \"ALTO PARANA\",\n      \"distrito\": 145,\n      \"distritoDescripcion\": \"CIUDAD DEL ESTE\",\n      \"ciudad\": 3432,\n      \"ciudadDescripcion\": \"CIUDAD DEL ESTE (MUNIC)\",\n      \"telefono\": \"0973583374\",\n      \"email\": \"JEROVIAHACONTABILIDAD@HOTMAIL.COM\",\n      \"denominacion\": \"Sucursal 1\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Generar documento",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://j0cocs0sksoocwoo88gs08o8.154.53.52.208.sslip.io/documentos",
+          "protocol": "http",
+          "host": [
+            "j0cocs0sksoocwoo88gs08o8",
+            "154",
+            "53",
+            "52",
+            "208",
+            "sslip",
+            "io"
+          ],
+          "path": [
+            "documentos"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipoDocumento\": 5,\n  \"establecimiento\": \"001\",\n  \"punto\": \"001\",\n  \"numero\": \"0000008\",\n  \"codigoSeguridadAleatorio\": \"657678\",\n  \"descripcion\": \"Factura electrónica\",\n  \"observacion\": \"\",\n  \"fecha\": \"2025-08-14T10:57:26\",\n  \"tipoEmision\": 1,\n  \"tipoTransaccion\": 2,\n  \"tipoImpuesto\": 1,\n  \"moneda\": \"PYG\",\n  \"condicionAnticipo\": 0,\n  \"condicionTipoCambio\": 0,\n  \"descuentoGlobal\": 0,\n  \"anticipoGlobal\": 0,\n  \"cambio\": \"\",\n  \"factura\": {\n    \"presencia\": 1,\n    \"fecha\": \"2025-08-14T10:57:26\"\n  },\n  \"cliente\": {\n    \"contribuyente\": true,\n    \"razonSocial\": \"Rosmary Brunaga\",\n    \"tipoOperacion\": 1,\n    \"tipoContribuyente\": 2,\n    \"direccion\": \"\",\n    \"numeroCasa\": \"0\",\n    \"departamento\": 11,\n    \"departamentoDescripcion\": \"ALTO PARANA\",\n    \"distrito\": 173,\n    \"distritoDescripcion\": \"CIUDAD DEL ESTE\",\n    \"ciudad\": 4278,\n    \"ciudadDescripcion\": \"CIUDAD DEL ESTE\",\n    \"pais\": \"PRY\",\n    \"paisDescripcion\": \"Paraguay\",\n    \"telefono\": \"\",\n    \"celular\": \"\",\n    \"email\": \"\",\n    \"codigo\": \"026\",\n    \"ruc\": \"4155258-0\",\n    \"documentoTipo\": 1,\n    \"documentoNumero\": \"4155258\"\n  },\n  \"usuario\": {\n    \"documentoTipo\": 1,\n    \"documentoNumero\": \"157264\",\n    \"nombre\": \"Juan Pérez\",\n    \"cargo\": \"Vendedor\"\n  },\n  \"condicion\": {\n    \"tipo\": 1,\n    \"entregas\": [\n      {\n        \"tipo\": 1,\n        \"monto\": 100000,\n        \"moneda\": \"PYG\",\n        \"cambio\": 0\n      }\n    ]\n  },\n  \"items\": [\n    {\n      \"codigo\": \"15253621\",\n      \"descripcion\": \"Servicios profesionales\",\n      \"observacion\": \"\",\n      \"unidadMedida\": 77,\n      \"cantidad\": 1,\n      \"precioUnitario\": 100000,\n      \"cambio\": 0,\n      \"descuento\": 0,\n      \"anticipo\": 0,\n      \"pais\": \"PRY\",\n      \"paisDescripcion\": \"Paraguay\",\n      \"ivaTipo\": 1,\n      \"ivaBase\": 100,\n      \"iva\": 10\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Subir certificado",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://carlos-benitez.tecasispy.com/certificado-emisor",
+          "protocol": "http",
+          "host": [
+            "carlos-benitez",
+            "tecasispy",
+            "com"
+          ],
+          "path": [
+            "certificado-emisor"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "emisorId",
+              "value": "1",
+              "disabled": false,
+              "type": "default"
+            },
+            {
+              "key": "password",
+              "value": "carlos1002",
+              "disabled": false,
+              "type": "default"
+            },
+            {
+              "key": "CSC",
+              "value": "C222663Ae927cd714F0954cd4AD3940A",
+              "disabled": false,
+              "type": "default"
+            },
+            {
+              "key": "certificado",
+              "value": [
+                "/Users/ricardosamudio/workspace/ticketop/facturacion-electronica/certificados/2992141_4.p12"
+              ],
+              "disabled": false,
+              "type": "default"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "buscar documento por cdc",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/documentos/consulta-cdc/01029921414001001000001012025100210007997920",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "documentos",
+            "consulta-cdc",
+            "01029921414001001000001012025100210007997920"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "buscar documento por lote",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "https://carlos-benitez.tecasispy.com/documentos/consulta-lote/11835008931753765442",
+          "protocol": "https",
+          "host": [
+            "carlos-benitez",
+            "tecasispy",
+            "com"
+          ],
+          "path": [
+            "documentos",
+            "consulta-lote",
+            "11835008931753765442"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "buscar documentos",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ2MTAsImV4cCI6MTc1OTY5MTAxMH0.VU6r6-BN14M91F7ciTc9XyNxCjEq0hSe6vzLfFjY4q4",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ2MTAsImV4cCI6MTc1OTY5MTAxMH0.VU6r6-BN14M91F7ciTc9XyNxCjEq0hSe6vzLfFjY4q4",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/documentos/listar?page=1&limit=10&sortBy=fechaCreacion&sortOrder=DESC",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "documentos",
+            "listar"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "sortBy",
+              "value": "fechaCreacion"
+            },
+            {
+              "key": "sortOrder",
+              "value": "DESC"
+            }
+          ],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "evento de cancelacion",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "user_token",
+            "value": "tu_token_secreto_aqui_cambiar_en_produccion",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://j0cocs0sksoocwoo88gs08o8.154.53.52.208.sslip.io/documentos/generar-documento-cancelacion/01029921414001001000001012025090610000003567",
+          "protocol": "http",
+          "host": [
+            "j0cocs0sksoocwoo88gs08o8",
+            "154",
+            "53",
+            "52",
+            "208",
+            "sslip",
+            "io"
+          ],
+          "path": [
+            "documentos",
+            "generar-documento-cancelacion",
+            "01029921414001001000001012025090610000003567"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "login",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ2MTAsImV4cCI6MTc1OTY5MTAxMH0.VU6r6-BN14M91F7ciTc9XyNxCjEq0hSe6vzLfFjY4q4",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ2MTAsImV4cCI6MTc1OTY5MTAxMH0.VU6r6-BN14M91F7ciTc9XyNxCjEq0hSe6vzLfFjY4q4",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/documentos/listar?page=1&limit=10&sortBy=fechaCreacion&sortOrder=DESC",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "documentos",
+            "listar"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "sortBy",
+              "value": "fechaCreacion"
+            },
+            {
+              "key": "sortOrder",
+              "value": "DESC"
+            }
+          ],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "register",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "authorization",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ2MTAsImV4cCI6MTc1OTY5MTAxMH0.VU6r6-BN14M91F7ciTc9XyNxCjEq0hSe6vzLfFjY4q4",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyIiwic3ViIjoxLCJpYXQiOjE3NTk2MDQ4MTksImV4cCI6MTc1OTY5MTIxOX0.j6DC5gyxopN1F4ITuneKVfRN3YgW0x_YUGc8LPYPIsg",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:3000/users/login",
+          "protocol": "http",
+          "host": [
+            "localhost:3000"
+          ],
+          "path": [
+            "users",
+            "login"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}
