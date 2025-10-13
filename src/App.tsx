@@ -21,6 +21,7 @@ import { Configuracion } from "./pages/Configuration";
 import { CrearProducto } from "./pages/CrearProducto";
 import { EditarProducto } from "./pages/EditarProducto";
 import { ConfigurarEmisor } from "./pages/ConfigurarEmisor";
+import { ConsultasDocumentos } from "./pages/ConsultasDocumentos";
 import SidebarComponent from "./components/SidebarComponent";
 
 function AppContent() {
@@ -57,6 +58,7 @@ function AppContent() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/generar_factura" element={<GenerarFactura />} />
             <Route path="/facturas" element={<Facturas />} />
+            <Route path="/consultas" element={<ConsultasDocumentos />} />
             <Route path="/clientes" element={<Clientes />} />
             <Route path="/empresas" element={<Empresas />} />
             <Route path="/productos" element={<Productos />} />

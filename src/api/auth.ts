@@ -21,13 +21,42 @@ export const login = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Error al iniciar sesión");
+      let mensajeError = "No se pudo iniciar sesión. Por favor, intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+
+        // Mapear códigos de error HTTP a mensajes amigables
+        switch (response.status) {
+          case 401:
+            mensajeError = "Usuario o contraseña incorrectos. Verifique sus credenciales";
+            break;
+          case 403:
+            mensajeError = "Su cuenta no tiene permisos para acceder al sistema";
+            break;
+          case 404:
+            mensajeError = "Usuario no encontrado. Verifique su nombre de usuario";
+            break;
+          case 500:
+            mensajeError = "Error en el servidor. Intente nuevamente más tarde";
+            break;
+          default:
+            mensajeError = errorData.message || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error en login:", error);
+    // Si es un error de red (fetch falló)
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
+    // Re-lanzar el error original si ya tiene un mensaje personalizado
     throw error;
   }
 };
@@ -68,7 +97,8 @@ export const validateToken = async (): Promise<boolean> => {
 
     return response.ok;
   } catch (error) {
-    console.error("Error al validar token:", error);
+    // Error de validación de token - simplemente retornar false
+    // No es necesario mostrar error al usuario
     return false;
   }
 };

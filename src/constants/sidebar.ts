@@ -16,6 +16,11 @@ export const sidebarItems: SidebarItem[] = [
     icon: "FileText",
   },
   {
+    url: "/consultas",
+    title: "Consultas y Cancelaciones",
+    icon: "Search",
+  },
+  {
     url: "/productos",
     title: "Productos",
     icon: "Package",

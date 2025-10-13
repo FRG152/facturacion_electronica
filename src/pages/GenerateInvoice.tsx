@@ -20,6 +20,7 @@ import type { InvoiceItem, Client, FacturaData } from "../interfaces";
 import { transformToCompleteInvoiceStructure } from "../utils/invoiceTransformer";
 import { crearDocumento } from "../api/documentos";
 import { toast } from "sonner";
+import { formatDateForSET } from "../lib/utils";
 
 export function GenerarFactura() {
   const [items, setItems] = useState<InvoiceItem[]>([]);
@@ -127,7 +128,7 @@ export function GenerarFactura() {
           ).toString(),
           descripcion: "Factura electrónica",
           observacion: "",
-          fecha: new Date().toISOString(),
+          fecha: formatDateForSET(),
           tipoEmision: 1,
           tipoTransaccion: 2,
           tipoImpuesto: 1,
@@ -173,12 +174,32 @@ export function GenerarFactura() {
       }
     } catch (error) {
       console.error("Error al emitir la factura:", error);
-      toast.error("Error al emitir la factura", {
-        description:
-          error instanceof Error
-            ? error.message
-            : "Ocurrió un error al procesar la solicitud",
-        duration: 5000,
+
+      let titulo = "Error al emitir la factura";
+      let descripcion = "Ocurrió un error inesperado. Intente nuevamente";
+
+      if (error instanceof Error) {
+        descripcion = error.message;
+
+        // Personalizar el título según el tipo de error
+        if (error.message.includes("RUC")) {
+          titulo = "Error en RUC del cliente";
+        } else if (error.message.includes("cliente")) {
+          titulo = "Error en datos del cliente";
+        } else if (error.message.includes("datos de factura")) {
+          titulo = "Error en datos de la factura";
+        } else if (error.message.includes("sesión")) {
+          titulo = "Sesión expirada";
+        } else if (error.message.includes("conectar")) {
+          titulo = "Error de conexión";
+        } else if (error.message.includes("permisos")) {
+          titulo = "Sin permisos";
+        }
+      }
+
+      toast.error(titulo, {
+        description: descripcion,
+        duration: 6000,
       });
     } finally {
       setIsSubmitting(false);
@@ -206,28 +227,86 @@ export function GenerarFactura() {
   const cantidadTotal = items.reduce((total, item) => total + item.cantidad, 0);
 
   const emitirFactura = () => {
+    // Validación 1: Empresa seleccionada
     if (!empresaSeleccionada) {
-      toast.error("Error", {
+      toast.error("Empresa no seleccionada", {
         description: "Debe seleccionar una empresa antes de emitir la factura",
         duration: 5000,
       });
       return;
     }
-    if (items.length === 0) {
-      toast.error("Error", {
-        description: "Debe agregar al menos un ítem",
-        duration: 5000,
-      });
-      return;
-    }
+
+    // Validación 2: Cliente seleccionado
     if (!cliente) {
-      toast.error("Error", {
-        description: "Debe seleccionar un cliente",
+      toast.error("Cliente no seleccionado", {
+        description: "Debe seleccionar un cliente para emitir la factura",
         duration: 5000,
       });
       return;
     }
 
+    // Validación 3: Items agregados
+    if (items.length === 0) {
+      toast.error("Factura sin productos", {
+        description: "Debe agregar al menos un producto a la factura",
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Validación 4: Validar cada item
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (!item) continue; // Saltar si el item no existe (no debería pasar)
+
+      const itemNum = i + 1;
+
+      if (!item.descripcion || item.descripcion.trim() === "") {
+        toast.error(`Error en producto #${itemNum}`, {
+          description: "La descripción del producto no puede estar vacía",
+          duration: 5000,
+        });
+        return;
+      }
+
+      if (item.cantidad <= 0) {
+        toast.error(`Error en producto #${itemNum}`, {
+          description: "La cantidad debe ser mayor a cero",
+          duration: 5000,
+        });
+        return;
+      }
+
+      if (item.precio < 0) {
+        toast.error(`Error en producto #${itemNum}`, {
+          description: "El precio no puede ser negativo",
+          duration: 5000,
+        });
+        return;
+      }
+    }
+
+    // Validación 5: Validar RUC del cliente si es persona jurídica
+    if (cliente.tipo_persona === "juridica") {
+      if (!cliente.ruc || cliente.ruc.trim() === "") {
+        toast.error("RUC faltante", {
+          description: "El cliente seleccionado (persona jurídica) debe tener un RUC válido",
+          duration: 5000,
+        });
+        return;
+      }
+
+      // Verificar que el RUC tenga el formato correcto con DV
+      if (!cliente.ruc.includes("-")) {
+        toast.error("RUC sin dígito verificador", {
+          description: `El RUC del cliente debe incluir el dígito verificador (formato: XXXXXXXX-Y)`,
+          duration: 6000,
+        });
+        return;
+      }
+    }
+
+    // Todas las validaciones pasaron
     setIsConfirmModalOpen(true);
   };
 

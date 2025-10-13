@@ -11,6 +11,9 @@ import {
   mapUnidadMedidaToCode,
   convertIvaToCode,
   normalizarTelefono,
+  validarRuc,
+  formatearRuc,
+  formatDateForSET,
 } from "../lib/utils";
 
 /**
@@ -39,7 +42,7 @@ export function transformToCompleteInvoiceStructure(
     usuario?: InvoiceUsuario;
   }
 ): CompleteInvoiceStructure {
-  const now = new Date().toISOString();
+  const now = formatDateForSET();
 
   return {
     tipoDocumento: additionalData.tipoDocumento || 1,
@@ -81,7 +84,7 @@ export function transformToCompleteInvoiceStructure(
  */
 function transformCliente(cliente: any): InvoiceCliente {
   if (!cliente) {
-    throw new Error("Cliente es requerido para emitir la factura");
+    throw new Error("El cliente es requerido para emitir la factura");
   }
 
   // Determinar tipo de persona y documento
@@ -95,24 +98,46 @@ function transformCliente(cliente: any): InvoiceCliente {
   let documentoNumero = "";
 
   if (esPersonaJuridica) {
-    // Persona Jurídica: usa RUC completo y extrae el número
-    ruc = cliente.ruc || "";
-    documentoNumero = ruc.replace(/[^0-9]/g, ""); // Extraer solo números del RUC
+    // Persona Jurídica: DEBE tener RUC válido
+    if (!cliente.ruc || cliente.ruc.trim() === "") {
+      throw new Error("Las personas jurídicas deben tener un RUC válido");
+    }
+
+    // Usar el RUC tal como viene (sin recalcular DV)
+    ruc = cliente.ruc.trim();
+
+    // Validar formato básico (que tenga guión)
+    if (!ruc.includes("-")) {
+      throw new Error(
+        `El RUC de ${cliente.nombre} debe tener el formato XXXXXXXX-Y (ejemplo: 4155258-0)`
+      );
+    }
+
+    documentoNumero = ruc.split("-")[0]; // Extraer solo la parte numérica (sin DV)
   } else {
     // Persona Física: puede tener RUC o solo CI
     const tieneRuc = cliente.tiene_ruc === 1 || (cliente.ruc && cliente.ruc.length > 0);
 
     if (tieneRuc && cliente.ruc) {
-      // Tiene RUC: usar RUC completo y extraer número
-      ruc = cliente.ruc;
-      documentoNumero = ruc.replace(/[^0-9]/g, "");
+      // Usar el RUC tal como viene (sin recalcular DV)
+      ruc = cliente.ruc.trim();
+
+      // Validar formato básico (que tenga guión)
+      if (!ruc.includes("-")) {
+        throw new Error(
+          `El RUC de ${cliente.nombre} debe tener el formato XXXXXXXX-Y (ejemplo: 4155258-0)`
+        );
+      }
+
+      documentoNumero = ruc.split("-")[0]; // Extraer solo la parte numérica (sin DV)
     } else if (cliente.ci) {
       // Solo tiene CI: usar CI como documento
       documentoNumero = cliente.ci.replace(/[^0-9]/g, "");
       ruc = ""; // Persona física sin RUC
     } else {
-      // Fallback: intentar usar ruc como documento genérico
-      documentoNumero = (cliente.ruc || "").replace(/[^0-9]/g, "");
+      throw new Error(
+        `El cliente ${cliente.nombre} debe tener al menos CI o RUC`
+      );
     }
   }
 
@@ -209,14 +234,28 @@ function transformItems(items: any[]): InvoiceItemAPI[] {
     // Normalizar la unidad primero (ej: "Kilogramo" → "KG")
     const unidadNormalizada = mapUnidadMedida(item.unidad);
 
-    // Convertir a código numérico de la SET (ej: "KG" → 22)
+    // Convertir a código numérico de la SET (ej: "KG" → 83)
     const unidadMedidaCode = mapUnidadMedidaToCode(unidadNormalizada);
 
     // Obtener porcentaje de IVA desde el tipo
     const ivaPercentage = getIvaPercentage(item.tipoIva);
 
-    // Convertir a código numérico de la SET (ej: 10% → 3)
+    // Convertir a código numérico de la SET
+    // Códigos corregidos: 1 = IVA 10%, 2 = IVA 5%, 3 = Exentas
     const ivaTipoCode = convertIvaToCode(ivaPercentage);
+
+    // Calcular ivaBase e iva según la API de la SET Paraguay
+    // ivaBase: 100 = 100% de la base es gravada, 0 = exento
+    // iva: el porcentaje de IVA (10, 5, o 0)
+    let ivaBase = 0;
+    let iva = 0;
+
+    if (ivaPercentage > 0) {
+      // Si tiene IVA (5% o 10%)
+      ivaBase = 100; // 100% de la base es gravada
+      iva = ivaPercentage; // El porcentaje (5 o 10)
+    }
+    // Si es exento (ivaPercentage = 0), ambos quedan en 0
 
     return {
       codigo: item.codigo || "",
@@ -231,8 +270,8 @@ function transformItems(items: any[]): InvoiceItemAPI[] {
       pais: "PRY",
       paisDescripcion: "Paraguay",
       ivaTipo: ivaTipoCode,
-      ivaBase: 100,
-      iva: ivaPercentage,
+      ivaBase: ivaBase,
+      iva: iva,
     };
   });
 }

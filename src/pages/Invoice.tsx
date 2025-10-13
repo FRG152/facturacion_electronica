@@ -4,6 +4,7 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import {
   Table,
@@ -20,10 +21,12 @@ import { type Factura } from "../constants/invoice";
 import { useState, useEffect } from "react";
 import { generarPDF, getListaDocumentos } from "../api";
 import type { DocumentoItem, ListarDocumentosParams } from "@/interfaces";
+import { toast } from "sonner";
 
 export function Facturas() {
   const [filteredFacturas, setFilteredFacturas] = useState<Factura[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const [paginaActual, setPaginaActual] = useState(1);
   const [limitePorPagina] = useState(10);
@@ -133,23 +136,51 @@ export function Facturas() {
   };
 
   const handleGeneratePDF = async (factura: Factura) => {
-    let xmlData: string = "";
+    try {
+      setIsGeneratingPDF(true);
 
-    if (factura.xmlConQR) {
-      xmlData = factura.xmlConQR;
+      // Validación: verificar que exista XML
+      if (!factura.xmlConQR || factura.xmlConQR.trim() === "") {
+        toast.error("Sin datos XML", {
+          description: "Esta factura no tiene datos XML disponibles para generar el PDF",
+          duration: 5000,
+        });
+        return;
+      }
+
+      // Generar el PDF
+      const pdfBlob = await generarPDF(factura.xmlConQR);
+
+      // Descargar el archivo
+      const url = window.URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Factura_${factura.numeroFactura}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // Mostrar mensaje de éxito
+      toast.success("PDF generado correctamente", {
+        description: `El PDF de la factura ${factura.numeroFactura} se descargó exitosamente`,
+        duration: 4000,
+      });
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+
+      let descripcion = "Ocurrió un error inesperado al generar el PDF";
+      if (error instanceof Error) {
+        descripcion = error.message;
+      }
+
+      toast.error("Error al generar PDF", {
+        description: descripcion,
+        duration: 6000,
+      });
+    } finally {
+      setIsGeneratingPDF(false);
     }
-
-    const pdfBlob = await generarPDF(xmlData);
-    console.log(pdfBlob);
-
-    const url = window.URL.createObjectURL(pdfBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `Factura_${factura.numeroFactura}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
   };
 
 
@@ -242,9 +273,19 @@ export function Facturas() {
                         size="sm"
                         className="btn-primary"
                         onClick={() => handleGeneratePDF(factura)}
+                        disabled={isGeneratingPDF}
                       >
-                        <FileText size={30} />
-                        PDF
+                        {isGeneratingPDF ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 animate-spin" />
+                            Generando...
+                          </>
+                        ) : (
+                          <>
+                            <Download size={30} />
+                            PDF
+                          </>
+                        )}
                       </Button>
                     </div>
                   </TableCell>

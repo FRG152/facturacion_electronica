@@ -36,13 +36,35 @@ export const getListaDocumentos = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Error al listar documentos");
+      let mensajeError = "No se pudieron cargar los documentos. Intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+        switch (response.status) {
+          case 401:
+            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            break;
+          case 403:
+            mensajeError = "No tiene permisos para ver los documentos";
+            break;
+          case 500:
+            mensajeError = "Error en el servidor. Intente nuevamente más tarde";
+            break;
+          default:
+            mensajeError = errorData.message || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error al listar documentos:", error);
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
     throw error;
   }
 };
@@ -66,19 +88,57 @@ export const crearDocumento = async (
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Error al crear documento");
+      let mensajeError = "No se pudo generar la factura. Verifique los datos e intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+
+        // Extraer el mensaje de error más específico si existe
+        let detalleError = errorData.message || "";
+
+        switch (response.status) {
+          case 400:
+            // Error de validación - mostrar detalles específicos
+            mensajeError = "Datos de factura inválidos:\n" + detalleError;
+            break;
+          case 401:
+            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            break;
+          case 403:
+            mensajeError = "No tiene permisos para generar facturas";
+            break;
+          case 422:
+            mensajeError = "Error en los datos de la factura:\n" + detalleError;
+            break;
+          case 500:
+            mensajeError = "Error en el servidor al procesar la factura. Intente nuevamente";
+            break;
+          default:
+            mensajeError = detalleError || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error al crear documento:", error);
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
     throw error;
   }
 };
 
 export const generarPDF = async (xmlData: string): Promise<Blob> => {
   try {
+    // Validación: verificar que el XML no esté vacío
+    if (!xmlData || xmlData.trim() === "") {
+      throw new Error("No se puede generar el PDF sin datos XML. Verifique que la factura esté completa");
+    }
+
     const formData = new FormData();
     formData.append("xmlConQR", xmlData);
 
@@ -88,12 +148,35 @@ export const generarPDF = async (xmlData: string): Promise<Blob> => {
     });
 
     if (!response.ok) {
-      throw new Error("Error al generar PDF");
+      let mensajeError = "No se pudo generar el PDF. Intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+        switch (response.status) {
+          case 400:
+            mensajeError = "Los datos del documento son inválidos. Verifique que la factura esté aprobada";
+            break;
+          case 404:
+            mensajeError = "El servicio de generación de PDF no está disponible. Contacte al administrador";
+            break;
+          case 500:
+            mensajeError = "Error en el servidor al generar el PDF. Intente nuevamente más tarde";
+            break;
+          default:
+            mensajeError = errorData.message || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
     }
 
     return await response.blob();
   } catch (error) {
-    console.error("Error al generar PDF:", error);
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
     throw error;
   }
 };
@@ -217,13 +300,92 @@ export const consultarDocumentoPorLote = async (lote: string): Promise<any> => {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Error al consultar lote");
+      let mensajeError = "No se pudo consultar el lote. Intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+        switch (response.status) {
+          case 404:
+            mensajeError = "No se encontró ningún documento con ese número de lote";
+            break;
+          case 401:
+            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            break;
+          case 500:
+            mensajeError = "Error en el servidor. Intente nuevamente más tarde";
+            break;
+          default:
+            mensajeError = errorData.message || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error al consultar documento por lote:", error);
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
+    throw error;
+  }
+};
+
+/**
+ * Generar evento de cancelación de documento
+ * POST /documentos/generar-documento-cancelacion/:cdc
+ * Endpoint según tecasis-facturacion.json línea 309-346
+ */
+export const generarEventoCancelacion = async (cdc: string): Promise<any> => {
+  try {
+    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+
+    const response = await fetch(`${API_BASE_URL}/documentos/generar-documento-cancelacion/${cdc}`, {
+      method: "POST",
+      headers: {
+        user_token: userToken,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      let mensajeError = "No se pudo cancelar el documento. Intente nuevamente";
+
+      try {
+        const errorData = await response.json();
+        switch (response.status) {
+          case 400:
+            mensajeError = "El documento no puede ser cancelado: " + (errorData.message || "datos inválidos");
+            break;
+          case 404:
+            mensajeError = "No se encontró el documento con el CDC proporcionado";
+            break;
+          case 401:
+            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            break;
+          case 409:
+            mensajeError = "El documento ya fue cancelado anteriormente";
+            break;
+          case 500:
+            mensajeError = "Error en el servidor. Intente nuevamente más tarde";
+            break;
+          default:
+            mensajeError = errorData.message || mensajeError;
+        }
+      } catch {
+        // Si no se puede parsear el error, usar mensaje por defecto
+      }
+
+      throw new Error(mensajeError);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+    }
     throw error;
   }
 };

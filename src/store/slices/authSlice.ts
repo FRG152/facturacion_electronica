@@ -37,7 +37,9 @@ export const loginUser = createAsyncThunk(
       return response.user;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Error desconocido";
+        error instanceof Error
+          ? error.message
+          : "No se pudo iniciar sesión. Por favor, intente nuevamente";
       return rejectWithValue(errorMessage);
     }
   }
@@ -51,9 +53,10 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
     } catch (error) {
+      // Limpiar de todas formas
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
-      return rejectWithValue("Error en logout");
+      return rejectWithValue("Error al cerrar sesión. La sesión se cerró localmente");
     }
   }
 );
@@ -82,7 +85,7 @@ export const checkAuth = createAsyncThunk(
     } catch (error) {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
-      return rejectWithValue("Error al verificar autenticación");
+      return rejectWithValue("Su sesión ha expirado. Por favor, inicie sesión nuevamente");
     }
   }
 );

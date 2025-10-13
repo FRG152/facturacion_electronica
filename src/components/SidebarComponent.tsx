@@ -8,6 +8,7 @@ import {
   PlusCircle,
   Building2,
   FileKey,
+  Search,
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,6 +33,7 @@ const iconMap = {
   Package,
   Building2,
   FileKey,
+  Search,
 };
 
 const SidebarComponent = () => {
