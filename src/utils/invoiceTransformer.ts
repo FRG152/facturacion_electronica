@@ -1,19 +1,17 @@
 import type {
-  CompleteInvoiceStructure,
   FacturaData,
+  InvoiceItemAPI,
   InvoiceCliente,
   InvoiceUsuario,
   InvoiceCondicion,
-  InvoiceItemAPI,
+  CompleteInvoiceStructure,
 } from "../interfaces";
 import {
   mapUnidadMedida,
-  mapUnidadMedidaToCode,
+  formatDateForSET,
   convertIvaToCode,
   normalizarTelefono,
-  validarRuc,
-  formatearRuc,
-  formatDateForSET,
+  mapUnidadMedidaToCode,
 } from "../lib/utils";
 
 /**
