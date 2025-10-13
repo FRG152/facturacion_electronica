@@ -173,8 +173,8 @@ export function ConsultasDocumentos() {
         {/* TAB: Consultar por Lote */}
         <TabsContent value="lote" className="mt-6">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Consultar Documentos por Número de Lote</h2>
-            <p className="text-sm text-gray-600 mb-6">
+            <h2 className="text-lg font-semibold">Consultar Documentos por Número de Lote</h2>
+            <p className="text-sm text-gray-600">
               Ingrese el número de lote para consultar todos los documentos asociados
             </p>
 
@@ -195,12 +195,12 @@ export function ConsultasDocumentos() {
               >
                 {isLoadingLote ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Consultando...
                   </>
                 ) : (
                   <>
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-4 h-4" />
                     Consultar
                   </>
                 )}
@@ -222,8 +222,8 @@ export function ConsultasDocumentos() {
         {/* TAB: Consultar por CDC */}
         <TabsContent value="cdc" className="mt-6">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Consultar Documento por CDC</h2>
-            <p className="text-sm text-gray-600 mb-6">
+            <h2 className="text-lg font-semibold">Consultar Documento por CDC</h2>
+            <p className="text-sm text-gray-600">
               Ingrese el CDC (Código de Control del Documento) para consultar su estado
             </p>
 
@@ -244,12 +244,12 @@ export function ConsultasDocumentos() {
               >
                 {isLoadingCdc ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Consultando...
                   </>
                 ) : (
                   <>
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-4 h-4" />
                     Consultar
                   </>
                 )}
@@ -281,8 +281,8 @@ export function ConsultasDocumentos() {
         {/* TAB: Cancelar Documento */}
         <TabsContent value="cancelacion" className="mt-6">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">Cancelar Documento Electrónico</h2>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <h2 className="text-lg font-semibold">Cancelar Documento Electrónico</h2>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex gap-3">
                 <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -296,7 +296,7 @@ export function ConsultasDocumentos() {
               </div>
             </div>
 
-            <div className="flex gap-3 mb-6">
+            <div className="flex gap-3">
               <div className="flex-1">
                 <Input
                   label="CDC del Documento"
@@ -314,12 +314,12 @@ export function ConsultasDocumentos() {
               >
                 {isLoadingCancelacion ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Cancelando...
                   </>
                 ) : (
                   <>
-                    <FileX className="w-4 h-4 mr-2" />
+                    <FileX className="w-4 h-4" />
                     Cancelar Documento
                   </>
                 )}
