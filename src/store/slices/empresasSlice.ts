@@ -2,7 +2,7 @@
  * Redux Slice para gestión de empresas
  */
 
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
 import type {
   Empresa,
   CrearEmpresaDTO,

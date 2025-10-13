@@ -20,6 +20,7 @@ export interface Producto {
   imagen1?: string;
   imagen2?: string;
   created_at?: string;
+  stock_actual?: number;
 }
 
 export interface CreateProductoDto {

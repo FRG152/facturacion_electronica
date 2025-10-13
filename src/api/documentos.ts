@@ -98,15 +98,6 @@ export const generarPDF = async (xmlData: string): Promise<Blob> => {
   }
 };
 
-export const generarPDFConJsPDF = async (): Promise<void> => {
-  try {
-    const { generarPDFPrueba } = await import("../utils/pdfGenerator");
-    generarPDFPrueba();
-  } catch (error) {
-    console.error("Error al generar PDF con jsPDF:", error);
-    throw error;
-  }
-};
 
 /**
  * Configurar datos del emisor

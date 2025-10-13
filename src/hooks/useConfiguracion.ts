@@ -7,7 +7,7 @@ export const useConfiguracion = () => {
 
   const enviarConfiguracion = async (
     data: ConfiguracionFacturaFormData,
-    tipoDocumento: string
+    // tipoDocumento: string
   ) => {
     setIsLoading(true);
     setError(null);

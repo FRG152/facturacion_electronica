@@ -1,7 +1,7 @@
 import * as React from "react"
-import { Toaster as Sonner, ToasterProps } from "sonner"
+import { Toaster as Sonner,  } from "sonner"
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = ({ ...props }: any) => {
   return (
     <Sonner
       theme="light"

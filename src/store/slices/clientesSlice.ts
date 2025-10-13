@@ -298,7 +298,7 @@ const clientesSlice = createSlice({
         state.isDeleting = false;
         // Marcar como eliminado en lugar de remover
         const index = state.clientes.findIndex((c) => c.id === action.payload);
-        if (index !== -1) {
+        if (index !== -1 && state.clientes[index]) {
           state.clientes[index].eliminado = 1;
         }
       })

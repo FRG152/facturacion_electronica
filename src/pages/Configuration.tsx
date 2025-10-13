@@ -39,7 +39,7 @@ export function Configuracion() {
   });
 
   const onSubmit = async (data: ConfiguracionFacturaFormData) => {
-    await enviarConfiguracion(data, "factura");
+    await enviarConfiguracion(data);
   };
 
   const onCancel = () => {

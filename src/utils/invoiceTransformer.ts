@@ -3,7 +3,6 @@ import type {
   FacturaData,
   InvoiceCliente,
   InvoiceUsuario,
-  InvoiceFactura,
   InvoiceCondicion,
   InvoiceItemAPI,
 } from "../interfaces";
@@ -68,7 +67,7 @@ export function transformToCompleteInvoiceStructure(
     cliente: transformCliente(facturaData.cliente),
     usuario: additionalData.usuario || getDefaultUsuario(),
     condicion: transformCondicion(
-      facturaData.condicionPago,
+      // facturaData.condicionPago,
       facturaData.totales.totalVenta
     ),
     items: transformItems(facturaData.items),
@@ -242,7 +241,7 @@ function transformItems(items: any[]): InvoiceItemAPI[] {
  * Transforms payment condition to InvoiceCondicion
  */
 function transformCondicion(
-  condicionPago: string,
+  // condicionPago: string,
   totalVenta: number
 ): InvoiceCondicion {
   return {

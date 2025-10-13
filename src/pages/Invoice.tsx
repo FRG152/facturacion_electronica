@@ -152,13 +152,6 @@ export function Facturas() {
     window.URL.revokeObjectURL(url);
   };
 
-  const handleGeneratePDFTest = async () => {
-    try {
-      await generarPDFConJsPDF();
-    } catch (error) {
-      console.error("Error al generar PDF de prueba:", error);
-    }
-  };
 
   return (
     <div className="page-container">

@@ -6,7 +6,7 @@ interface StatusBadgeProps {
   variant?: "default" | "secondary" | "destructive" | "outline";
 }
 
-const StatusBadge = ({ status, variant = "default" }: StatusBadgeProps) => {
+const StatusBadge = ({ status }: StatusBadgeProps) => {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "PENDIENTE":
