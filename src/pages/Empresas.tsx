@@ -96,7 +96,10 @@ export function Empresas() {
             empresa: data,
           })
         ).unwrap();
-        toast.success("Empresa actualizada correctamente");
+        toast.success("Empresa actualizada", {
+          description: "La empresa se actualizó correctamente",
+          duration: 4000,
+        });
       } else {
         // Crear empresa y obtener la respuesta con api_token
         const empresaCreada = await dispatch(createEmpresa(data)).unwrap();
@@ -104,9 +107,9 @@ export function Empresas() {
         // Auto-seleccionar la empresa recién creada
         dispatch(setEmpresaSeleccionada(empresaCreada));
 
-        toast.success("Empresa creada correctamente", {
+        toast.success("Empresa creada", {
           description: `${empresaCreada.nombre} - API Token generado`,
-          duration: 5000,
+          duration: 4000,
         });
       }
       handleCloseForm();
@@ -119,7 +122,10 @@ export function Empresas() {
   const handleEliminarEmpresa = async (id: number) => {
     try {
       await dispatch(deleteEmpresa(id)).unwrap();
-      toast.success("Empresa eliminada correctamente");
+      toast.success("Empresa eliminada", {
+        description: "La empresa se eliminó correctamente",
+        duration: 4000,
+      });
       dispatch(fetchEmpresas(filtros));
     } catch (err) {
       // El error ya se maneja en el reducer
@@ -129,7 +135,10 @@ export function Empresas() {
   const handleToggleStatus = async (id: number) => {
     try {
       await dispatch(toggleEmpresaStatus(id)).unwrap();
-      toast.success("Estado actualizado correctamente");
+      toast.success("Estado actualizado", {
+        description: "El estado de la empresa se actualizó correctamente",
+        duration: 4000,
+      });
       dispatch(fetchEmpresas(filtros));
     } catch (err) {
       // El error ya se maneja en el reducer

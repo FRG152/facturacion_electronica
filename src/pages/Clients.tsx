@@ -95,10 +95,16 @@ export function Clientes() {
             cliente: data,
           })
         ).unwrap();
-        toast.success("Cliente actualizado correctamente");
+        toast.success("Cliente actualizado", {
+          description: "El cliente se actualizó correctamente",
+          duration: 4000,
+        });
       } else {
         await dispatch(createCliente(data)).unwrap();
-        toast.success("Cliente creado correctamente");
+        toast.success("Cliente creado", {
+          description: "El cliente se creó correctamente",
+          duration: 4000,
+        });
       }
       handleCloseForm();
       dispatch(fetchClientes(filtros));
@@ -110,7 +116,10 @@ export function Clientes() {
   const handleEliminarCliente = async (id: number) => {
     try {
       await dispatch(deleteCliente({ id })).unwrap();
-      toast.success("Cliente eliminado correctamente");
+      toast.success("Cliente eliminado", {
+        description: "El cliente se eliminó correctamente",
+        duration: 4000,
+      });
       dispatch(fetchClientes(filtros));
     } catch (err) {
       // El error ya se maneja en el reducer
@@ -120,7 +129,10 @@ export function Clientes() {
   const handleRestaurarCliente = async (id: number) => {
     try {
       await dispatch(restoreCliente(id)).unwrap();
-      toast.success("Cliente restaurado correctamente");
+      toast.success("Cliente restaurado", {
+        description: "El cliente se restauró correctamente",
+        duration: 4000,
+      });
       dispatch(fetchClientes(filtros));
     } catch (err) {
       // El error ya se maneja en el reducer

@@ -40,9 +40,9 @@ export const sidebarItems: SidebarItem[] = [
     title: "Configurar Emisor",
     icon: "FileKey",
   },
-  {
-    url: "/configuracion",
-    title: "Configuración",
-    icon: "Settings",
-  },
+  // {
+  //   url: "/configuracion",
+  //   title: "Configuración",
+  //   icon: "Settings",
+  // },
 ];

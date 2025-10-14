@@ -43,6 +43,8 @@ import { AlertTriangle, Save, ArrowLeft } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
+import { toast } from "sonner";
+
 export function ProductoForm() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -138,12 +140,24 @@ export function ProductoForm() {
             producto: data as UpdateProductoFormData,
           })
         ).unwrap();
+        toast.success("Producto actualizado", {
+          description: "El producto se actualizó correctamente",
+          duration: 4000,
+        });
       } else {
         await dispatch(createProducto(data as CreateProductoFormData)).unwrap();
+        toast.success("Producto creado", {
+          description: "El producto se creó correctamente",
+          duration: 4000,
+        });
       }
       navigate("/productos");
     } catch (error) {
       console.error("Error al guardar producto:", error);
+      toast.error("Error al guardar", {
+        description: error instanceof Error ? error.message : "Ocurrió un error al guardar el producto",
+        duration: 5000,
+      });
     }
   };
 

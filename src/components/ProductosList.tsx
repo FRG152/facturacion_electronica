@@ -35,6 +35,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export function ProductosList() {
   const dispatch = useAppDispatch();
@@ -84,11 +85,22 @@ export function ProductosList() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (productoToDelete) {
-      dispatch(deleteProducto(productoToDelete));
-      setDeleteDialogOpen(false);
-      setProductoToDelete(null);
+      try {
+        await dispatch(deleteProducto(productoToDelete)).unwrap();
+        toast.success("Producto eliminado", {
+          description: "El producto se eliminó correctamente",
+          duration: 4000,
+        });
+        setDeleteDialogOpen(false);
+        setProductoToDelete(null);
+      } catch (error) {
+        toast.error("Error al eliminar", {
+          description: error instanceof Error ? error.message : "No se pudo eliminar el producto",
+          duration: 5000,
+        });
+      }
     }
   };
 
@@ -259,6 +271,7 @@ export function ProductosList() {
                               handleDeleteClick(producto.id_producto!)
                             }
                             disabled={isDeleting}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

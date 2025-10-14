@@ -159,7 +159,7 @@ export function ClientesList({
                         variant="outline"
                         onClick={() => handleDelete(cliente.id)}
                         disabled={isDeleting || deletingId === cliente.id}
-                        className="btn-danger"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -171,7 +171,7 @@ export function ClientesList({
                         variant="outline"
                         onClick={() => handleRestore(cliente.id)}
                         disabled={isDeleting || deletingId === cliente.id}
-                        className="btn-restore"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50"
                       >
                         <RotateCcw className="h-4 w-4" />
                         Restaurar
