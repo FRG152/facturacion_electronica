@@ -15,6 +15,8 @@ import {
   TableHeader,
 } from "../components/ui/table";
 
+import QRCode from "qrcode";
+
 import html2pdf from "html2pdf.js";
 
 import { toast } from "sonner";
@@ -140,7 +142,7 @@ export function Facturas() {
 
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
 
-  const handleGeneratePDF = (factura: Factura) => {
+  const handleGeneratePDF = async (factura: Factura) => {
     try {
       setIsGeneratingPDF(true);
 
@@ -264,6 +266,10 @@ export function Facturas() {
         totalIva: parseFloat(getNodeValue("dTotIVA")) || 0,
         totalOperacion: parseFloat(getNodeValue("dTotOpe")) || 0,
       };
+
+      const qrCode = getNodeValue("dCarQR");
+
+      const qrCodeDataURL = await QRCode.toDataURL(qrCode || `${qrCode}`);
 
       // Generar filas de items
       let itemsHtml = "";
@@ -515,7 +521,7 @@ export function Facturas() {
               text-align: center; 
               margin: 12px 0; 
               letter-spacing: 1px; 
-              padding: 10px; 
+              padding: 10px 0 21px 0; 
               background-color: #f8f9fa; 
               font-family: 'Courier New', monospace; 
               word-wrap: break-word;
@@ -682,7 +688,7 @@ export function Facturas() {
               <table>
                 <tr>
                   <td class="qr-section">
-                    <div class="qr-placeholder">QR<br>CODE</div>
+                     <img src="${qrCodeDataURL}" alt="QR" width="120" height="120" />
                   </td>
                   <td class="verification-section">
                     <strong>Consulte esta Factura Electrónica con el número impreso abajo:</strong><br>
