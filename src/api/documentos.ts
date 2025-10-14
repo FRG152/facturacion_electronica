@@ -1,9 +1,9 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL_AUTH || "/api";
 
 import type {
-  CompleteInvoiceStructure,
-  CrearDocumentoResponse,
   ListarDocumentosParams,
+  CrearDocumentoResponse,
+  CompleteInvoiceStructure,
   ListarDocumentosResponse,
 } from "../interfaces";
 

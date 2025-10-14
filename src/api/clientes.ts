@@ -1,14 +1,19 @@
 import type {
   CrearClienteDTO,
+  ClienteResponse,
   ActualizarClienteDTO,
   ListarClientesParams,
-  ListarClientesResponse,
-  ClienteResponse,
-  ClienteEmpresaResponse,
   DeleteClienteResponse,
+  ListarClientesResponse,
+  ClienteEmpresaResponse,
 } from "../interfaces/clientes";
+
+import {
+  manejarErrorFetch,
+  obtenerMensajeErrorAmigable,
+} from "../utils/errorHandling";
+
 import { getApiToken } from "../utils/authHelpers";
-import { obtenerMensajeErrorAmigable, manejarErrorFetch } from "../utils/errorHandling";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL_CLIENTS;
 
@@ -36,7 +41,10 @@ export const crearCliente = async (
     });
 
     if (!response.ok) {
-      const mensajeError = await obtenerMensajeErrorAmigable(response, "crear el cliente");
+      const mensajeError = await obtenerMensajeErrorAmigable(
+        response,
+        "crear el cliente"
+      );
       throw new Error(mensajeError);
     }
 
@@ -82,7 +90,10 @@ export const listarClientes = async (
     });
 
     if (!response.ok) {
-      const mensajeError = await obtenerMensajeErrorAmigable(response, "cargar los clientes");
+      const mensajeError = await obtenerMensajeErrorAmigable(
+        response,
+        "cargar los clientes"
+      );
       throw new Error(mensajeError);
     }
 
@@ -104,7 +115,9 @@ export const obtenerClientePorId = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     let url = `${API_BASE_URL}/clientes/${id}`;
@@ -145,7 +158,9 @@ export const actualizarCliente = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("Debe seleccionar una empresa antes de actualizar el cliente");
+      throw new Error(
+        "Debe seleccionar una empresa antes de actualizar el cliente"
+      );
     }
 
     let url = `${API_BASE_URL}/clientes/${id}`;
@@ -163,7 +178,10 @@ export const actualizarCliente = async (
     });
 
     if (!response.ok) {
-      const mensajeError = await obtenerMensajeErrorAmigable(response, "actualizar el cliente");
+      const mensajeError = await obtenerMensajeErrorAmigable(
+        response,
+        "actualizar el cliente"
+      );
       throw new Error(mensajeError);
     }
 
@@ -185,7 +203,9 @@ export const eliminarCliente = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("Debe seleccionar una empresa antes de eliminar el cliente");
+      throw new Error(
+        "Debe seleccionar una empresa antes de eliminar el cliente"
+      );
     }
 
     let url = `${API_BASE_URL}/clientes/${id}`;
@@ -202,7 +222,10 @@ export const eliminarCliente = async (
     });
 
     if (!response.ok) {
-      const mensajeError = await obtenerMensajeErrorAmigable(response, "eliminar el cliente");
+      const mensajeError = await obtenerMensajeErrorAmigable(
+        response,
+        "eliminar el cliente"
+      );
       throw new Error(mensajeError);
     }
 
@@ -223,7 +246,9 @@ export const restaurarCliente = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("Debe seleccionar una empresa antes de restaurar el cliente");
+      throw new Error(
+        "Debe seleccionar una empresa antes de restaurar el cliente"
+      );
     }
 
     const response = await fetch(`${API_BASE_URL}/clientes/${id}/restore`, {
@@ -235,7 +260,10 @@ export const restaurarCliente = async (
     });
 
     if (!response.ok) {
-      const mensajeError = await obtenerMensajeErrorAmigable(response, "restaurar el cliente");
+      const mensajeError = await obtenerMensajeErrorAmigable(
+        response,
+        "restaurar el cliente"
+      );
       throw new Error(mensajeError);
     }
 
@@ -256,7 +284,9 @@ export const eliminarClientePermanente = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(`${API_BASE_URL}/clientes/${id}/hard`, {
@@ -292,7 +322,9 @@ export const listarClientesPorEmpresa = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(

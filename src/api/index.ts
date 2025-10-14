@@ -1,30 +1,34 @@
 export { login, logout, validateToken } from "./auth";
+
 export { getListaDocumentos, crearDocumento, generarPDF } from "./documentos";
+
 export {
-  listarProductos,
   crearProducto,
   buscarProductos,
-  obtenerProductoPorId,
-  buscarProductoPorCodigoBarras,
-  obtenerProductosBajoStock,
-  actualizarProducto,
+  listarProductos,
   eliminarProducto,
+  actualizarProducto,
+  obtenerProductoPorId,
+  obtenerProductosBajoStock,
+  buscarProductoPorCodigoBarras,
 } from "./productos";
+
 export {
   crearCliente,
   listarClientes,
-  obtenerClientePorId,
-  actualizarCliente,
   eliminarCliente,
   restaurarCliente,
-  eliminarClientePermanente,
+  actualizarCliente,
+  obtenerClientePorId,
   listarClientesPorEmpresa,
+  eliminarClientePermanente,
 } from "./clientes";
+
 export {
   crearEmpresa,
   listarEmpresas,
-  obtenerEmpresaPorId,
-  actualizarEmpresa,
   eliminarEmpresa,
+  actualizarEmpresa,
+  obtenerEmpresaPorId,
   toggleEmpresaStatus,
 } from "./empresas";

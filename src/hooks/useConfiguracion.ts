@@ -6,7 +6,7 @@ export const useConfiguracion = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const enviarConfiguracion = async (
-    data: ConfiguracionFacturaFormData,
+    data: ConfiguracionFacturaFormData
     // tipoDocumento: string
   ) => {
     setIsLoading(true);
