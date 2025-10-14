@@ -1,16 +1,30 @@
+import {
+  fetchClientes,
+  createCliente,
+  searchClientes,
+} from "../../store/slices/clientesSlice";
+
+import { toast } from "sonner";
+
+import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { useState, useEffect } from "react";
-import { Search, X, Loader2, Plus, Users } from "lucide-react";
+
 import type { Client } from "@/interfaces";
-import type { CrearClienteDTO } from "@/interfaces/clientes";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { searchClientes, fetchClientes, createCliente } from "../../store/slices/clientesSlice";
-import { Badge } from "../ui/badge";
+
 import { ClienteQuickForm } from "../ClienteQuickForm";
-import { toast } from "sonner";
+
+import { useState, useEffect } from "react";
+
+import type { CrearClienteDTO } from "@/interfaces/clientes";
+
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+
+import { Search, X, Loader2, Plus, Users } from "lucide-react";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 interface CustomerSearchModalProps {
   isOpen: boolean;
@@ -24,7 +38,9 @@ export function CustomerSearchModal({
   onSelectCustomer,
 }: CustomerSearchModalProps) {
   const dispatch = useAppDispatch();
-  const { clientes, isLoading, isCreating } = useAppSelector((state) => state.clientes);
+  const { clientes, isLoading, isCreating } = useAppSelector(
+    (state) => state.clientes
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"buscar" | "crear">("buscar");
 
@@ -87,7 +103,8 @@ export function CustomerSearchModal({
       handleSelectCustomer(nuevoCliente);
     } catch (error) {
       toast.error("Error al crear cliente", {
-        description: error instanceof Error ? error.message : "Error desconocido",
+        description:
+          error instanceof Error ? error.message : "Error desconocido",
       });
     }
   };
@@ -106,7 +123,11 @@ export function CustomerSearchModal({
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "buscar" | "crear")} className="flex-1 flex flex-col">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as "buscar" | "crear")}
+          className="flex-1 flex flex-col"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="buscar" className="flex items-center gap-2">
               <Search className="h-4 w-4" />
@@ -118,7 +139,10 @@ export function CustomerSearchModal({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="buscar" className="flex-1 mt-4 overflow-hidden flex flex-col">
+          <TabsContent
+            value="buscar"
+            className="flex-1 mt-4 overflow-hidden flex flex-col"
+          >
             <div className="space-y-4 flex-1 flex flex-col">
               <div className="flex gap-2">
                 <Input
@@ -146,7 +170,9 @@ export function CustomerSearchModal({
                         onClick={() => handleSelectCustomer(cliente)}
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <div className="font-medium text-lg">{cliente.nombre}</div>
+                          <div className="font-medium text-lg">
+                            {cliente.nombre}
+                          </div>
                           <Badge
                             variant={
                               cliente.tipo_persona === "fisica"
@@ -227,8 +253,9 @@ export function CustomerSearchModal({
             <div className="pr-2">
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  <strong>Creación rápida:</strong> Completa los campos esenciales.
-                  El cliente será guardado y seleccionado automáticamente.
+                  <strong>Creación rápida:</strong> Completa los campos
+                  esenciales. El cliente será guardado y seleccionado
+                  automáticamente.
                 </p>
               </div>
               <ClienteQuickForm

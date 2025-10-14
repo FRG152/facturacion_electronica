@@ -4,12 +4,13 @@ import {
   Navigate,
   BrowserRouter as Router,
 } from "react-router-dom";
-import { useEffect } from "react";
-import { checkAuth } from "./store/slices/authSlice";
-import { GenerarFactura } from "./pages/GenerateInvoice";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { Toaster } from "./components/ui/sonner";
 
+import { useEffect } from "react";
+
+import { checkAuth } from "./store/slices/authSlice";
+
+import { Toaster } from "./components/ui/sonner";
+import SidebarComponent from "./components/SidebarComponent";
 
 import { Login } from "./pages/Login";
 import { Clientes } from "./pages/Clients";
@@ -19,10 +20,13 @@ import { Productos } from "./pages/Productos";
 import { Dashboard } from "./pages/Dashboard";
 import { Configuracion } from "./pages/Configuration";
 import { CrearProducto } from "./pages/CrearProducto";
+import { GenerarFactura } from "./pages/GenerateInvoice";
 import { EditarProducto } from "./pages/EditarProducto";
 import { ConfigurarEmisor } from "./pages/ConfigurarEmisor";
 import { ConsultasDocumentos } from "./pages/ConsultasDocumentos";
-import SidebarComponent from "./components/SidebarComponent";
+
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import LogoutModal from "./components/Modals/LogoutModal";
 
 function AppContent() {
   const dispatch = useAppDispatch();
@@ -78,6 +82,7 @@ function App() {
   return (
     <Router>
       <AppContent />
+      <LogoutModal />
       <Toaster richColors position="top-right" />
     </Router>
   );

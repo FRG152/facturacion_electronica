@@ -20,33 +20,32 @@ import {
   SidebarContent,
 } from "./ui/sidebar";
 
-import { logoutUser } from "../store/slices/authSlice";
 import { sidebarItems } from "../constants/sidebar";
+
+import { setModalLogout } from "../store/slices/authSlice";
+
 import { EmpresaSelector } from "./EmpresaSelector";
 
 import { Link, useLocation } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const iconMap = {
   Home,
-  FileText,
   Users,
-  Settings,
-  PlusCircle,
-  Package,
-  Building2,
-  FileKey,
   Search,
+  FileKey,
+  Package,
+  FileText,
+  Settings,
+  Building2,
+  PlusCircle,
 };
 
 const SidebarComponent = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-
-  const handleLogout = () => {
-    dispatch(logoutUser());
-  };
 
   return (
     <Sidebar>
@@ -88,8 +87,8 @@ const SidebarComponent = () => {
         </SidebarItem>
         <div>
           <SidebarItem
-            onClick={handleLogout}
             icon={<LogOut size={50} />}
+            onClick={() => dispatch(setModalLogout(true))}
             className="sidebar_btn_logout"
           >
             Cerrar Sesión

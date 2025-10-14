@@ -3,6 +3,8 @@ import { Button } from "../ui/button";
 
 import { Search, X, Plus } from "lucide-react";
 
+import { searchProductos } from "@/store/slices/productosSlice";
+
 import type { InvoiceItem } from "../../interfaces";
 
 import { useEffect, useState } from "react";
@@ -12,7 +14,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { mapUnidadMedida, convertIvaToType } from "@/lib/utils";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { searchProductos } from "@/store/slices/productosSlice";
 
 interface ProductSearchModalProps {
   isOpen: boolean;
@@ -31,21 +32,17 @@ export function ProductSearchModal({
 
   const dispatch = useAppDispatch();
 
-  // Debounced search with API
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchTerm.trim().length > 0) {
         dispatch(searchProductos({ search: searchTerm }));
       } else {
-        // Load all products if search is empty
         dispatch(searchProductos({}));
       }
-    }, 500); // 500ms debounce
-
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm, dispatch]);
 
-  // Initial load when modal opens
   useEffect(() => {
     if (isOpen) {
       dispatch(searchProductos({}));

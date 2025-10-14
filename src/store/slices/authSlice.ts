@@ -14,6 +14,7 @@ import type { LoginFormData, User } from "../../schemas/auth/login";
 
 interface AuthState {
   user: User | null;
+  logout: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -21,6 +22,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
+  logout: false,
   isAuthenticated: false,
   isLoading: true,
   error: null,
@@ -104,6 +106,9 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    setModalLogout: (state, action) => {
+      state.logout = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Login
@@ -168,5 +173,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, setModalLogout } = authSlice.actions;
 export default authSlice.reducer;

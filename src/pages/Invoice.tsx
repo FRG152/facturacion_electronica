@@ -320,8 +320,16 @@ export function Facturas() {
         <head>
           <meta charset="UTF-8">
           <style>
-            body { font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; color: #000; }
-            .container { width: 100%; max-width: 210mm; margin: 0 auto; padding: 15px; }
+            .container { 
+              color: #000; 
+              width: 100%; 
+              margin: 0 auto; 
+              padding: 15px; 
+              max-width: 210mm; 
+              font-size: 11px; 
+              line-height: 1.4; 
+              font-family: Arial, sans-serif; 
+            }
             
             .status-badge { 
               color: white; 
