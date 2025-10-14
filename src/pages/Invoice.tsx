@@ -5,6 +5,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+
 import {
   Table,
   TableRow,
@@ -13,14 +14,21 @@ import {
   TableHead,
   TableHeader,
 } from "../components/ui/table";
+
 import html2pdf from "html2pdf.js";
+
 import { toast } from "sonner";
+
 import { Button } from "../components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
 import InvoiceFilter from "@/components/InvoiceFilter";
+
 import { type Factura } from "../constants/invoice";
+
 import { getListaDocumentos } from "../api";
+
 import { useState, useEffect } from "react";
+
 import type { DocumentoItem, ListarDocumentosParams } from "@/interfaces";
 
 export function Facturas() {
@@ -312,35 +320,33 @@ export function Facturas() {
         <head>
           <meta charset="UTF-8">
           <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; color: #000; }
             .container { width: 100%; max-width: 210mm; margin: 0 auto; padding: 15px; }
             
             .status-badge { 
-              background-color: #dc3545; 
               color: white; 
-              padding: 10px; 
-              text-align: center; 
-              margin-bottom: 0; 
-              font-weight: bold; 
-              font-size: 12px; 
               border: none;
+              height: 28px;
+              font-size: 12px; 
+              text-align: center; 
+              font-weight: bold; 
+              margin-bottom: 10px;
+              background-color: #dc3545; 
             }
             
             .main-header { 
               border: 2px solid #000; 
-              border-top: none;
-              padding: 15px; 
+              padding: 12px; 
               margin-bottom: 10px; 
+              border-radius: 10px;
               background-color: #fff; 
             }
             
-            .main-header table { width: 100%; border-collapse: collapse; }
+            .main-header table { width: 100%; }
             .main-header td { vertical-align: top; padding: 5px; }
             
             .header-left { 
               width: 20%; 
-              border-right: 1px solid #ddd;
               padding-right: 15px;
             }
             
@@ -354,38 +360,46 @@ export function Facturas() {
               width: 35%; 
               text-align: right;
               padding-left: 15px;
-              border-left: 1px solid #ddd;
             }
             
             .company-name { 
+              color: #000;
               font-size: 13px; 
               font-weight: bold; 
-              margin-bottom: 5px;
-              color: #000;
             }
             
             .company-activity { 
-              font-size: 9px; 
               color: #666; 
+              font-size: 9px; 
               font-style: italic; 
-              margin-bottom: 8px; 
+            }
+
+            .company-location {
+              font-size: 9px; 
+            }
+
+            .company-address {
+              color: #666; 
+              font-size: 9px; 
+            }
+
+            .company-phone {
+              font-size: 9px; 
+            }
+
+            .company-email {
+              font-size: 9px;
             }
             
             .invoice-number { 
-              background-color: #fff; 
-              border: 2px solid #000;
               color: #000; 
-              padding: 8px; 
-              margin-top: 5px; 
-              font-size: 11px; 
-              font-weight: bold; 
-              text-align: center; 
             }
             
             .info-section { 
               border: 2px solid #000; 
               padding: 12px; 
               margin-bottom: 10px; 
+              border-radius: 10px;
               background-color: #fff; 
             }
             
@@ -395,20 +409,14 @@ export function Facturas() {
               padding: 8px; 
               width: 50%; 
             }
-            
-            .info-section td:first-child {
-              border-right: 1px solid #ddd;
-            }
-            
+          
             .section-title { 
+              color: #000; 
+              padding: 0 0 10px 0;
               font-size: 11px; 
               font-weight: bold; 
-              color: #000; 
-              border-bottom: 2px solid #000; 
-              padding-bottom: 5px; 
               margin-bottom: 8px; 
-              background-color: #f8f9fa;
-              padding: 5px;
+              border-bottom: 1px solid #000; 
             }
             
             .items-table { 
@@ -443,14 +451,14 @@ export function Facturas() {
             }
             
             .tax-summary { 
-              background-color: #6c757d; 
               color: white; 
-              padding: 10px; 
-              margin: 10px 0; 
-              text-align: right; 
-              font-size: 11px; 
-              font-weight: bold; 
+              height: 32px; 
               border: 2px solid #000;
+              font-size: 11px; 
+              text-align: right; 
+              font-weight: bold; 
+              padding-right: 8px; 
+              background-color: #6c757d; 
             }
             
             .footer-section { 
@@ -507,16 +515,15 @@ export function Facturas() {
             }
             
             .logo-placeholder {
+              color: #999;
               width: 100px;
               height: 80px;
-              background-color: #f0f0f0;
-              border: 1px solid #ddd;
               display: flex;
+              font-size: 10px;
+              text-align: center;
               align-items: center;
               justify-content: center;
-              font-size: 10px;
-              color: #999;
-              text-align: center;
+              background-color: #f0f0f0;
             }
           </style>
         </head>
@@ -527,32 +534,51 @@ export function Facturas() {
             <div class="main-header">
               <table>
                 <tr>
+
                   <td class="header-left">
                     <div class="logo-placeholder">
                       LOGO<br>EMPRESA
                     </div>
                   </td>
+
                   <td class="header-center">
+
                     <div class="company-name">${emisor.nombre}</div>
+
                     <div class="company-activity">${emisor.actividad}</div>
-                    <strong>Dirección:</strong> ${emisor.direccion}<br>
-                    <strong>Ciudad:</strong> ${emisor.ciudad} - ${
+
+                    <div class="company-address">${emisor.direccion}</div>
+
+                    <div class="company-location">${emisor.ciudad} - ${
         emisor.departamento
-      } - PARAGUAY<br>
-                    <strong>Teléfono:</strong> ${
+      } - PARAGUAY<br></div>
+
+                    <div class="company-phone"><strong>Teléfono:</strong> ${
                       emisor.telefono
-                    } <strong>Correo:</strong> ${emisor.email}
+                    } </div>
+                    
+                    <div class="company-email"><strong>Correo:</strong> ${
+                      emisor.email
+                    }</div>
+
                   </td>
+
                   <td class="header-right">
+
                     <strong>RUC:</strong> ${emisor.ruc}<br>
+
                     <strong>Timbrado N°:</strong> ${documento.timbrado}<br>
+
                     <strong>Inicio de vigencia:</strong> ${
                       documento.fechaVigencia
-                    }<br>
+                    }
+
                     <div class="invoice-number">Factura Electrónica<br>${
                       documento.establecimiento
                     }-${documento.puntoExpedicion}-${documento.numero}</div>
+
                   </td>
+
                 </tr>
               </table>
             </div>
@@ -561,49 +587,62 @@ export function Facturas() {
               <table>
                 <tr>
                   <td>
+
                     <div class="section-title">Información de Emisión</div>
+
                     <strong>Fecha y hora de emisión:</strong> ${formatFecha(
                       documento.fechaEmision
                     )}<br>
+
                     <strong>Condición de venta:</strong> ${
                       documento.condicion
                     }<br>
+
                     <strong>Moneda:</strong> ${documento.moneda}
+
                     ${
                       documento.tipoCambio
                         ? `<br><strong>Tipo de cambio:</strong> ${documento.tipoCambio}`
                         : ""
                     }
                   </td>
+
                   <td>
                     <div class="section-title">Datos del Cliente</div>
+
                     <strong>Nombre o Razón Social:</strong> ${
                       receptor.nombre
                     }<br>
+
                     <strong>RUC/Documento de identidad N°:</strong> ${
                       receptor.ruc
                     }<br>
+
                     ${
                       receptor.email
                         ? `<strong>Correo:</strong> ${receptor.email}<br>`
                         : ""
                     }
+
                     ${
                       receptor.direccion
                         ? `<strong>Dirección:</strong> ${receptor.direccion}<br>`
                         : ""
                     }
+
                     ${
                       receptor.telefono
                         ? `<strong>Teléfono:</strong> ${receptor.telefono}<br>`
                         : ""
                     }
+
                     ${
                       receptor.codigoCliente
                         ? `<strong>Código Cliente:</strong> ${receptor.codigoCliente}`
                         : ""
                     }
                   </td>
+
                 </tr>
               </table>
             </div>
