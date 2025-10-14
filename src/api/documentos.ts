@@ -12,7 +12,9 @@ export const getListaDocumentos = async (
 ): Promise<ListarDocumentosResponse> => {
   try {
     const token = localStorage.getItem("auth_token");
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
     const queryParams = new URLSearchParams();
     if (params.estado) queryParams.append("estado", params.estado);
@@ -36,13 +38,15 @@ export const getListaDocumentos = async (
     });
 
     if (!response.ok) {
-      let mensajeError = "No se pudieron cargar los documentos. Intente nuevamente";
+      let mensajeError =
+        "No se pudieron cargar los documentos. Intente nuevamente";
 
       try {
         const errorData = await response.json();
         switch (response.status) {
           case 401:
-            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            mensajeError =
+              "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
             break;
           case 403:
             mensajeError = "No tiene permisos para ver los documentos";
@@ -63,7 +67,9 @@ export const getListaDocumentos = async (
     return await response.json();
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+      throw new Error(
+        "No se pudo conectar con el servidor. Verifique su conexión a internet"
+      );
     }
     throw error;
   }
@@ -74,7 +80,9 @@ export const crearDocumento = async (
 ): Promise<CrearDocumentoResponse> => {
   try {
     const token = localStorage.getItem("auth_token");
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
     // Endpoint correcto según tecasis-facturacion.json línea 50-93
     const response = await fetch(`${API_BASE_URL}/documentos`, {
@@ -88,7 +96,8 @@ export const crearDocumento = async (
     });
 
     if (!response.ok) {
-      let mensajeError = "No se pudo generar la factura. Verifique los datos e intente nuevamente";
+      let mensajeError =
+        "No se pudo generar la factura. Verifique los datos e intente nuevamente";
 
       try {
         const errorData = await response.json();
@@ -102,7 +111,8 @@ export const crearDocumento = async (
             mensajeError = "Datos de factura inválidos:\n" + detalleError;
             break;
           case 401:
-            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            mensajeError =
+              "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
             break;
           case 403:
             mensajeError = "No tiene permisos para generar facturas";
@@ -111,7 +121,8 @@ export const crearDocumento = async (
             mensajeError = "Error en los datos de la factura:\n" + detalleError;
             break;
           case 500:
-            mensajeError = "Error en el servidor al procesar la factura. Intente nuevamente";
+            mensajeError =
+              "Error en el servidor al procesar la factura. Intente nuevamente";
             break;
           default:
             mensajeError = detalleError || mensajeError;
@@ -126,7 +137,9 @@ export const crearDocumento = async (
     return await response.json();
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+      throw new Error(
+        "No se pudo conectar con el servidor. Verifique su conexión a internet"
+      );
     }
     throw error;
   }
@@ -134,15 +147,16 @@ export const crearDocumento = async (
 
 export const generarPDF = async (xmlData: string): Promise<Blob> => {
   try {
-    // Validación: verificar que el XML no esté vacío
     if (!xmlData || xmlData.trim() === "") {
-      throw new Error("No se puede generar el PDF sin datos XML. Verifique que la factura esté completa");
+      throw new Error(
+        "No se puede generar el PDF sin datos XML. Verifique que la factura esté completa"
+      );
     }
 
     const formData = new FormData();
     formData.append("xmlConQR", xmlData);
 
-    const response = await fetch("/test-pdf-basico.php", {
+    const response = await fetch("/generarPdfDesdeXML.php", {
       method: "POST",
       body: formData,
     });
@@ -154,20 +168,21 @@ export const generarPDF = async (xmlData: string): Promise<Blob> => {
         const errorData = await response.json();
         switch (response.status) {
           case 400:
-            mensajeError = "Los datos del documento son inválidos. Verifique que la factura esté aprobada";
+            mensajeError =
+              "Los datos del documento son inválidos. Verifique que la factura esté aprobada";
             break;
           case 404:
-            mensajeError = "El servicio de generación de PDF no está disponible. Contacte al administrador";
+            mensajeError =
+              "El servicio de generación de PDF no está disponible. Contacte al administrador";
             break;
           case 500:
-            mensajeError = "Error en el servidor al generar el PDF. Intente nuevamente más tarde";
+            mensajeError =
+              "Error en el servidor al generar el PDF. Intente nuevamente más tarde";
             break;
           default:
             mensajeError = errorData.message || mensajeError;
         }
-      } catch {
-        // Si no se puede parsear el error, usar mensaje por defecto
-      }
+      } catch {}
 
       throw new Error(mensajeError);
     }
@@ -175,12 +190,13 @@ export const generarPDF = async (xmlData: string): Promise<Blob> => {
     return await response.blob();
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+      throw new Error(
+        "No se pudo conectar con el servidor. Verifique su conexión a internet"
+      );
     }
     throw error;
   }
 };
-
 
 /**
  * Configurar datos del emisor
@@ -190,7 +206,9 @@ export const generarPDF = async (xmlData: string): Promise<Blob> => {
  */
 export const configurarEmisor = async (emisorData: any): Promise<any> => {
   try {
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
     const response = await fetch(`${API_BASE_URL}/emisor`, {
       method: "POST",
@@ -226,7 +244,9 @@ export const subirCertificado = async (
   certificadoFile: File
 ): Promise<any> => {
   try {
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
     const formData = new FormData();
     formData.append("emisorId", emisorId.toString());
@@ -262,14 +282,19 @@ export const subirCertificado = async (
  */
 export const consultarDocumentoPorCDC = async (cdc: string): Promise<any> => {
   try {
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
-    const response = await fetch(`${API_BASE_URL}/documentos/consulta-cdc/${cdc}`, {
-      method: "GET",
-      headers: {
-        user_token: userToken,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/documentos/consulta-cdc/${cdc}`,
+      {
+        method: "GET",
+        headers: {
+          user_token: userToken,
+        },
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -290,14 +315,19 @@ export const consultarDocumentoPorCDC = async (cdc: string): Promise<any> => {
  */
 export const consultarDocumentoPorLote = async (lote: string): Promise<any> => {
   try {
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
-    const response = await fetch(`${API_BASE_URL}/documentos/consulta-lote/${lote}`, {
-      method: "GET",
-      headers: {
-        user_token: userToken,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/documentos/consulta-lote/${lote}`,
+      {
+        method: "GET",
+        headers: {
+          user_token: userToken,
+        },
+      }
+    );
 
     if (!response.ok) {
       let mensajeError = "No se pudo consultar el lote. Intente nuevamente";
@@ -306,10 +336,12 @@ export const consultarDocumentoPorLote = async (lote: string): Promise<any> => {
         const errorData = await response.json();
         switch (response.status) {
           case 404:
-            mensajeError = "No se encontró ningún documento con ese número de lote";
+            mensajeError =
+              "No se encontró ningún documento con ese número de lote";
             break;
           case 401:
-            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            mensajeError =
+              "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
             break;
           case 500:
             mensajeError = "Error en el servidor. Intente nuevamente más tarde";
@@ -327,7 +359,9 @@ export const consultarDocumentoPorLote = async (lote: string): Promise<any> => {
     return await response.json();
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+      throw new Error(
+        "No se pudo conectar con el servidor. Verifique su conexión a internet"
+      );
     }
     throw error;
   }
@@ -340,15 +374,20 @@ export const consultarDocumentoPorLote = async (lote: string): Promise<any> => {
  */
 export const generarEventoCancelacion = async (cdc: string): Promise<any> => {
   try {
-    const userToken = import.meta.env.VITE_USER_TOKEN || "tu_token_secreto_aqui_cambiar_en_produccion";
+    const userToken =
+      import.meta.env.VITE_USER_TOKEN ||
+      "tu_token_secreto_aqui_cambiar_en_produccion";
 
-    const response = await fetch(`${API_BASE_URL}/documentos/generar-documento-cancelacion/${cdc}`, {
-      method: "POST",
-      headers: {
-        user_token: userToken,
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/documentos/generar-documento-cancelacion/${cdc}`,
+      {
+        method: "POST",
+        headers: {
+          user_token: userToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       let mensajeError = "No se pudo cancelar el documento. Intente nuevamente";
@@ -357,13 +396,17 @@ export const generarEventoCancelacion = async (cdc: string): Promise<any> => {
         const errorData = await response.json();
         switch (response.status) {
           case 400:
-            mensajeError = "El documento no puede ser cancelado: " + (errorData.message || "datos inválidos");
+            mensajeError =
+              "El documento no puede ser cancelado: " +
+              (errorData.message || "datos inválidos");
             break;
           case 404:
-            mensajeError = "No se encontró el documento con el CDC proporcionado";
+            mensajeError =
+              "No se encontró el documento con el CDC proporcionado";
             break;
           case 401:
-            mensajeError = "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
+            mensajeError =
+              "Su sesión ha expirado. Por favor, inicie sesión nuevamente";
             break;
           case 409:
             mensajeError = "El documento ya fue cancelado anteriormente";
@@ -384,7 +427,9 @@ export const generarEventoCancelacion = async (cdc: string): Promise<any> => {
     return await response.json();
   } catch (error) {
     if (error instanceof TypeError) {
-      throw new Error("No se pudo conectar con el servidor. Verifique su conexión a internet");
+      throw new Error(
+        "No se pudo conectar con el servidor. Verifique su conexión a internet"
+      );
     }
     throw error;
   }

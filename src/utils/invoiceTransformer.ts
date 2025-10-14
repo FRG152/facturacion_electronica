@@ -88,7 +88,8 @@ function transformCliente(cliente: any): InvoiceCliente {
   // Determinar tipo de persona y documento
   // Si viene de la API de clientes, tiene tipo_persona y campos separados
   // Si viene de la interfaz Client antigua, solo tiene ruc
-  const tipoPersona = cliente.tipo_persona || (cliente.ruc ? "juridica" : "fisica");
+  const tipoPersona =
+    cliente.tipo_persona || (cliente.ruc ? "juridica" : "fisica");
   const esPersonaJuridica = tipoPersona === "juridica";
 
   // Determinar RUC/CI según el tipo de persona
@@ -114,7 +115,8 @@ function transformCliente(cliente: any): InvoiceCliente {
     documentoNumero = ruc.split("-")[0]; // Extraer solo la parte numérica (sin DV)
   } else {
     // Persona Física: puede tener RUC o solo CI
-    const tieneRuc = cliente.tiene_ruc === 1 || (cliente.ruc && cliente.ruc.length > 0);
+    const tieneRuc =
+      cliente.tiene_ruc === 1 || (cliente.ruc && cliente.ruc.length > 0);
 
     if (tieneRuc && cliente.ruc) {
       // Usar el RUC tal como viene (sin recalcular DV)

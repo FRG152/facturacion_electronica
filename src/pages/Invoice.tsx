@@ -1,10 +1,9 @@
 import {
   Copy,
-  FileText,
+  Download,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Download,
 } from "lucide-react";
 import {
   Table,
@@ -14,19 +13,20 @@ import {
   TableHead,
   TableHeader,
 } from "../components/ui/table";
+import html2pdf from "html2pdf.js";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import StatusBadge from "@/components/StatusBadge";
 import InvoiceFilter from "@/components/InvoiceFilter";
 import { type Factura } from "../constants/invoice";
+import { getListaDocumentos } from "../api";
 import { useState, useEffect } from "react";
-import { generarPDF, getListaDocumentos } from "../api";
 import type { DocumentoItem, ListarDocumentosParams } from "@/interfaces";
-import { toast } from "sonner";
 
 export function Facturas() {
-  const [filteredFacturas, setFilteredFacturas] = useState<Factura[]>([]);
   const [loading, setLoading] = useState(true);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [filteredFacturas, setFilteredFacturas] = useState<Factura[]>([]);
 
   const [paginaActual, setPaginaActual] = useState(1);
   const [limitePorPagina] = useState(10);
@@ -53,17 +53,16 @@ export function Facturas() {
         (doc: DocumentoItem) => ({
           id: doc.id,
           numeroFactura: doc.numeroDocumento,
-          timbrado: doc.lote.numeroLote,
           estado: doc.estado,
           cdc: doc.cdc,
-          lote: doc.lote.numeroLote,
-          estadoLote: doc.lote.estado as
+          lote: doc.lote?.numeroLote || "",
+          estadoLote: doc.lote?.estado as
             | "PENDIENTE"
             | "ENVIADO"
             | "RECHAZADO"
             | "APROBADO",
           fechaCreacion: new Date(doc.fechaCreacion).toLocaleDateString(),
-          xmlConQR: doc.xmlConQR,
+          xml: doc.xml,
         })
       );
 
@@ -131,49 +130,556 @@ export function Facturas() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
+  const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
 
-  const handleGeneratePDF = async (factura: Factura) => {
+  const handleGeneratePDF = (factura: Factura) => {
     try {
       setIsGeneratingPDF(true);
 
-      // Validación: verificar que exista XML
-      if (!factura.xmlConQR || factura.xmlConQR.trim() === "") {
+      if (!factura.xml || factura.xml.trim() === "") {
         toast.error("Sin datos XML", {
-          description: "Esta factura no tiene datos XML disponibles para generar el PDF",
+          description:
+            "Esta factura no tiene datos XML disponibles para generar el PDF",
           duration: 5000,
         });
         return;
       }
 
-      // Generar el PDF
-      const pdfBlob = await generarPDF(factura.xmlConQR);
+      // Parsear XML
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(factura.xml, "text/xml");
 
-      // Descargar el archivo
-      const url = window.URL.createObjectURL(pdfBlob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Factura_${factura.numeroFactura}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      // Helper para obtener valores
+      const getNodeValue = (tagName: string): string => {
+        const node = xmlDoc.getElementsByTagName(tagName)[0];
+        return node?.textContent?.trim() || "";
+      };
 
-      // Mostrar mensaje de éxito
-      toast.success("PDF generado correctamente", {
-        description: `El PDF de la factura ${factura.numeroFactura} se descargó exitosamente`,
-        duration: 4000,
-      });
-    } catch (error) {
-      console.error("Error al generar PDF:", error);
+      // Función para formatear números
+      const formatNum = (num: number | string): string => {
+        const n = typeof num === "string" ? parseFloat(num) : num;
+        return new Intl.NumberFormat("es-PY", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(n || 0);
+      };
 
-      let descripcion = "Ocurrió un error inesperado al generar el PDF";
-      if (error instanceof Error) {
-        descripcion = error.message;
+      // Función para formatear fecha
+      const formatFecha = (fecha: string): string => {
+        if (!fecha) return "-";
+        try {
+          const d = new Date(fecha);
+          return d.toLocaleString("es-PY", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+        } catch {
+          return fecha;
+        }
+      };
+
+      // Extraer datos del emisor
+      const emisor = {
+        nombre: getNodeValue("dNomEmi"),
+        ruc: getNodeValue("dRucEm") + "-" + getNodeValue("dDVEmi"),
+        direccion: getNodeValue("dDirEmi"),
+        telefono: getNodeValue("dTelEmi"),
+        email: getNodeValue("dEmailE"),
+        departamento: getNodeValue("dDesDepEmi"),
+        ciudad: getNodeValue("dDesCiuEmi"),
+        actividad: getNodeValue("dDesActEco"),
+      };
+
+      // Extraer datos del documento
+      const documento = {
+        timbrado: getNodeValue("dNumTim"),
+        establecimiento: getNodeValue("dEst"),
+        puntoExpedicion: getNodeValue("dPunExp"),
+        numero: getNodeValue("dNumDoc").padStart(7, "0"),
+        fechaVigencia: getNodeValue("dFeIniT"),
+        fechaEmision: getNodeValue("dFeEmiDE"),
+        cdc:
+          getNodeValue("Id") ||
+          xmlDoc.querySelector("DE")?.getAttribute("Id") ||
+          "",
+        condicion: getNodeValue("dDCondOpe"),
+        moneda: getNodeValue("cMoneOpe"),
+        tipoCambio: getNodeValue("dTiCam"),
+      };
+
+      // Extraer datos del receptor
+      const receptor = {
+        nombre: getNodeValue("dNomRec"),
+        ruc: getNodeValue("dRucRec") + "-" + getNodeValue("dDVRec"),
+        email: getNodeValue("dEmailRec"),
+        direccion: getNodeValue("dDirRec"),
+        telefono: getNodeValue("dTelRec"),
+        codigoCliente: getNodeValue("dCodCliente"),
+      };
+
+      // Extraer items
+      const itemNodes = xmlDoc.getElementsByTagName("gCamItem");
+      const items = [];
+
+      for (let i = 0; i < itemNodes.length; i++) {
+        const item = itemNodes[i];
+        const getItemValue = (tag: string) =>
+          item.getElementsByTagName(tag)[0]?.textContent?.trim() || "";
+
+        const cantidad = parseFloat(getItemValue("dCantProSer")) || 0;
+        const precioUnitario = parseFloat(getItemValue("dPUniProSer")) || 0;
+        const total = parseFloat(getItemValue("dTotOpeItem")) || 0;
+        const tasaIva = parseFloat(getItemValue("dTasaIVA")) || 0;
+
+        items.push({
+          codigo: getItemValue("dCodInt"),
+          descripcion: getItemValue("dDesProSer"),
+          cantidad,
+          precioUnitario,
+          total,
+          tasaIva,
+          unidad: getItemValue("dDesUniMed"),
+        });
       }
 
+      // Extraer totales
+      const totales = {
+        exentas: parseFloat(getNodeValue("dSubExe")) || 0,
+        gravadas5: parseFloat(getNodeValue("dSub5")) || 0,
+        gravadas10: parseFloat(getNodeValue("dSub10")) || 0,
+        iva5: parseFloat(getNodeValue("dIVA5")) || 0,
+        iva10: parseFloat(getNodeValue("dIVA10")) || 0,
+        totalIva: parseFloat(getNodeValue("dTotIVA")) || 0,
+        totalOperacion: parseFloat(getNodeValue("dTotOpe")) || 0,
+      };
+
+      // Generar filas de items
+      let itemsHtml = "";
+      items.forEach((item) => {
+        const exentas = item.tasaIva === 0 ? formatNum(item.total) : "0";
+        const grav5 = item.tasaIva === 5 ? formatNum(item.total) : "0";
+        const grav10 = item.tasaIva === 10 ? formatNum(item.total) : "0";
+
+        itemsHtml += `
+          <tr>
+            <td>${item.codigo}</td>
+            <td class="desc-col">${item.descripcion}</td>
+            <td>${formatNum(item.cantidad)}</td>
+            <td class="num-col">${formatNum(item.precioUnitario)}</td>
+            <td class="num-col">${exentas}</td>
+            <td class="num-col">${grav5}</td>
+            <td class="num-col">${grav10}</td>
+          </tr>
+        `;
+      });
+
+      // Agregar fila de subtotal
+      itemsHtml += `
+        <tr style="background-color: #f0f0f0;">
+          <td colspan="4" style="text-align: right; font-weight: bold;">Subtotal:</td>
+          <td class="num-col" style="font-weight: bold;">${formatNum(
+            totales.exentas
+          )}</td>
+          <td class="num-col" style="font-weight: bold;">${formatNum(
+            totales.gravadas5
+          )}</td>
+          <td class="num-col" style="font-weight: bold;">${formatNum(
+            totales.gravadas10
+          )}</td>
+        </tr>
+      `;
+
+      // Agregar fila de Total a Pagar
+      itemsHtml += `
+        <tr style="background-color: #34495e; color: white;">
+          <td colspan="6" style="text-align: right; font-weight: bold; padding: 8px;">Total a Pagar:</td>
+          <td class="num-col" style="font-weight: bold; padding: 8px;">${formatNum(
+            totales.totalOperacion
+          )}</td>
+        </tr>
+      `;
+
+      const cdcFormateado =
+        documento.cdc.match(/.{1,4}/g)?.join(" ") || documento.cdc;
+
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; font-size: 11px; line-height: 1.4; color: #000; }
+            .container { width: 100%; max-width: 210mm; margin: 0 auto; padding: 15px; }
+            
+            .status-badge { 
+              background-color: #dc3545; 
+              color: white; 
+              padding: 10px; 
+              text-align: center; 
+              margin-bottom: 0; 
+              font-weight: bold; 
+              font-size: 12px; 
+              border: none;
+            }
+            
+            .main-header { 
+              border: 2px solid #000; 
+              border-top: none;
+              padding: 15px; 
+              margin-bottom: 10px; 
+              background-color: #fff; 
+            }
+            
+            .main-header table { width: 100%; border-collapse: collapse; }
+            .main-header td { vertical-align: top; padding: 5px; }
+            
+            .header-left { 
+              width: 20%; 
+              border-right: 1px solid #ddd;
+              padding-right: 15px;
+            }
+            
+            .header-center { 
+              width: 45%; 
+              padding-left: 15px;
+              padding-right: 15px;
+            }
+            
+            .header-right { 
+              width: 35%; 
+              text-align: right;
+              padding-left: 15px;
+              border-left: 1px solid #ddd;
+            }
+            
+            .company-name { 
+              font-size: 13px; 
+              font-weight: bold; 
+              margin-bottom: 5px;
+              color: #000;
+            }
+            
+            .company-activity { 
+              font-size: 9px; 
+              color: #666; 
+              font-style: italic; 
+              margin-bottom: 8px; 
+            }
+            
+            .invoice-number { 
+              background-color: #fff; 
+              border: 2px solid #000;
+              color: #000; 
+              padding: 8px; 
+              margin-top: 5px; 
+              font-size: 11px; 
+              font-weight: bold; 
+              text-align: center; 
+            }
+            
+            .info-section { 
+              border: 2px solid #000; 
+              padding: 12px; 
+              margin-bottom: 10px; 
+              background-color: #fff; 
+            }
+            
+            .info-section table { width: 100%; border-collapse: collapse; }
+            .info-section td { 
+              vertical-align: top; 
+              padding: 8px; 
+              width: 50%; 
+            }
+            
+            .info-section td:first-child {
+              border-right: 1px solid #ddd;
+            }
+            
+            .section-title { 
+              font-size: 11px; 
+              font-weight: bold; 
+              color: #000; 
+              border-bottom: 2px solid #000; 
+              padding-bottom: 5px; 
+              margin-bottom: 8px; 
+              background-color: #f8f9fa;
+              padding: 5px;
+            }
+            
+            .items-table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              margin-bottom: 10px;
+              border: 2px solid #000;
+            }
+            
+            .items-table th { 
+              background-color: #34495e; 
+              color: white; 
+              border: 1px solid #000; 
+              padding: 8px 5px; 
+              text-align: center; 
+              font-weight: bold; 
+              font-size: 10px; 
+            }
+            
+            .items-table td { 
+              border: 1px solid #000; 
+              padding: 6px 5px; 
+              text-align: center; 
+              font-size: 10px; 
+            }
+            
+            .desc-col { text-align: left !important; }
+            .num-col { 
+              text-align: right !important; 
+              font-family: 'Courier New', monospace; 
+              padding-right: 8px !important; 
+            }
+            
+            .tax-summary { 
+              background-color: #6c757d; 
+              color: white; 
+              padding: 10px; 
+              margin: 10px 0; 
+              text-align: right; 
+              font-size: 11px; 
+              font-weight: bold; 
+              border: 2px solid #000;
+            }
+            
+            .footer-section { 
+              border: 2px solid #000; 
+              padding: 15px; 
+              margin-top: 10px; 
+              background-color: #fff; 
+            }
+            
+            .footer-section table { width: 100%; border-collapse: collapse; }
+            .footer-section td { vertical-align: top; }
+            
+            .qr-section { 
+              width: 30%; 
+              text-align: center; 
+              padding-right: 15px; 
+            }
+            
+            .qr-placeholder { 
+              width: 120px; 
+              height: 120px; 
+              background-color: #fff; 
+              border: 2px solid #000; 
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold; 
+              font-size: 14px;
+              margin: 0 auto;
+            }
+            
+            .verification-section { 
+              width: 70%; 
+              padding-left: 15px; 
+            }
+            
+            .verification-url { 
+              color: #0066cc; 
+              font-weight: bold; 
+              font-size: 10px; 
+            }
+            
+            .cdc-display { 
+              font-size: 10px; 
+              font-weight: bold; 
+              text-align: center; 
+              margin: 12px 0; 
+              letter-spacing: 1px; 
+              padding: 10px; 
+              background-color: #f8f9fa; 
+              font-family: 'Courier New', monospace; 
+              word-wrap: break-word;
+              border: 1px solid #ddd;
+            }
+            
+            .logo-placeholder {
+              width: 100px;
+              height: 80px;
+              background-color: #f0f0f0;
+              border: 1px solid #ddd;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 10px;
+              color: #999;
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="status-badge">KuDE de FACTURA ELECTRONICA</div>
+            
+            <div class="main-header">
+              <table>
+                <tr>
+                  <td class="header-left">
+                    <div class="logo-placeholder">
+                      LOGO<br>EMPRESA
+                    </div>
+                  </td>
+                  <td class="header-center">
+                    <div class="company-name">${emisor.nombre}</div>
+                    <div class="company-activity">${emisor.actividad}</div>
+                    <strong>Dirección:</strong> ${emisor.direccion}<br>
+                    <strong>Ciudad:</strong> ${emisor.ciudad} - ${
+        emisor.departamento
+      } - PARAGUAY<br>
+                    <strong>Teléfono:</strong> ${
+                      emisor.telefono
+                    } <strong>Correo:</strong> ${emisor.email}
+                  </td>
+                  <td class="header-right">
+                    <strong>RUC:</strong> ${emisor.ruc}<br>
+                    <strong>Timbrado N°:</strong> ${documento.timbrado}<br>
+                    <strong>Inicio de vigencia:</strong> ${
+                      documento.fechaVigencia
+                    }<br>
+                    <div class="invoice-number">Factura Electrónica<br>${
+                      documento.establecimiento
+                    }-${documento.puntoExpedicion}-${documento.numero}</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            
+            <div class="info-section">
+              <table>
+                <tr>
+                  <td>
+                    <div class="section-title">Información de Emisión</div>
+                    <strong>Fecha y hora de emisión:</strong> ${formatFecha(
+                      documento.fechaEmision
+                    )}<br>
+                    <strong>Condición de venta:</strong> ${
+                      documento.condicion
+                    }<br>
+                    <strong>Moneda:</strong> ${documento.moneda}
+                    ${
+                      documento.tipoCambio
+                        ? `<br><strong>Tipo de cambio:</strong> ${documento.tipoCambio}`
+                        : ""
+                    }
+                  </td>
+                  <td>
+                    <div class="section-title">Datos del Cliente</div>
+                    <strong>Nombre o Razón Social:</strong> ${
+                      receptor.nombre
+                    }<br>
+                    <strong>RUC/Documento de identidad N°:</strong> ${
+                      receptor.ruc
+                    }<br>
+                    ${
+                      receptor.email
+                        ? `<strong>Correo:</strong> ${receptor.email}<br>`
+                        : ""
+                    }
+                    ${
+                      receptor.direccion
+                        ? `<strong>Dirección:</strong> ${receptor.direccion}<br>`
+                        : ""
+                    }
+                    ${
+                      receptor.telefono
+                        ? `<strong>Teléfono:</strong> ${receptor.telefono}<br>`
+                        : ""
+                    }
+                    ${
+                      receptor.codigoCliente
+                        ? `<strong>Código Cliente:</strong> ${receptor.codigoCliente}`
+                        : ""
+                    }
+                  </td>
+                </tr>
+              </table>
+            </div>
+            
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th style="width: 10%;">Código</th>
+                  <th style="width: 25%;">Descripción</th>
+                  <th style="width: 10%;">Cantidad</th>
+                  <th style="width: 12%;">Precio</th>
+                  <th style="width: 13%;">Exentas</th>
+                  <th style="width: 13%;">5%</th>
+                  <th style="width: 17%;">10%</th>
+                </tr>
+              </thead>
+              <tbody>${itemsHtml}</tbody>
+            </table>
+            
+            <div class="tax-summary">
+              Liquidación Iva: (5%) ${formatNum(
+                totales.iva5
+              )} &nbsp;&nbsp; (10%) ${formatNum(
+        totales.iva10
+      )} &nbsp;&nbsp; <strong>Total Iva: ${formatNum(totales.totalIva)}</strong>
+            </div>
+            
+            <div class="footer-section">
+              <table>
+                <tr>
+                  <td class="qr-section">
+                    <div class="qr-placeholder">QR<br>CODE</div>
+                  </td>
+                  <td class="verification-section">
+                    <strong>Consulte esta Factura Electrónica con el número impreso abajo:</strong><br>
+                    <span class="verification-url">https://ekuatia.set.gov.py/consultas/</span>
+                    <div class="cdc-display">${cdcFormateado}</div>
+                    <div style="text-align: center; font-weight: bold; font-size: 10px; margin-top: 10px;">
+                      ESTE DOCUMENTO ES UNA REPRESENTACIÓN GRÁFICA DE UN<br>DOCUMENTO ELECTRÓNICO (XML)
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const element = document.createElement("div");
+      element.innerHTML = htmlContent;
+      document.body.appendChild(element);
+
+      const opt = {
+        margin: 10,
+        filename: `Factura_KuDE_${documento.establecimiento}-${documento.puntoExpedicion}-${documento.numero}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      html2pdf()
+        .set(opt)
+        .from(element)
+        .save()
+        .then(() => {
+          document.body.removeChild(element);
+          toast.success("PDF generado correctamente", {
+            description: `El PDF de la factura ${factura.numeroFactura} se descargó exitosamente`,
+            duration: 4000,
+          });
+        });
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      let descripcion = "Ocurrió un error inesperado al generar el PDF";
+      if (error instanceof Error) descripcion = error.message;
       toast.error("Error al generar PDF", {
         description: descripcion,
         duration: 6000,
@@ -182,7 +688,6 @@ export function Facturas() {
       setIsGeneratingPDF(false);
     }
   };
-
 
   return (
     <div className="page-container">
@@ -199,9 +704,6 @@ export function Facturas() {
               <TableHead className="font-semibold text-gray-900">ID</TableHead>
               <TableHead className="font-semibold text-gray-900">
                 Número Factura
-              </TableHead>
-              <TableHead className="font-semibold text-gray-900">
-                Timbrado
               </TableHead>
               <TableHead className="font-semibold text-gray-900">
                 Estado
@@ -235,15 +737,12 @@ export function Facturas() {
                   <TableCell className="font-medium">
                     {factura.numeroFactura}
                   </TableCell>
-                  <TableCell>{factura.timbrado}</TableCell>
                   <TableCell>
                     <StatusBadge status={factura.estado} />
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <p className="code-inline">
-                        {factura.cdc}
-                      </p>
+                      <p className="code-inline">{factura.cdc}</p>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -255,14 +754,16 @@ export function Facturas() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1">
-                      <div className="code-inline">
-                        {factura.lote}
+                    {factura.lote ? (
+                      <div className="space-y-1">
+                        <div className="code-inline">{factura.lote}</div>
+                        <div>
+                          <StatusBadge status={factura.estadoLote} />
+                        </div>
                       </div>
-                      <div>
-                        <StatusBadge status={factura.estadoLote} />
-                      </div>
-                    </div>
+                    ) : (
+                      <div className="code-inline">-</div>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm text-gray-600">
                     {factura.fechaCreacion}
@@ -302,6 +803,7 @@ export function Facturas() {
         </div>
       )}
 
+      {/* Paginacion */}
       {totalPaginas > 1 && (
         <div className="pagination-container">
           <div className="pagination-info">

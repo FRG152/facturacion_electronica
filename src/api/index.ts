@@ -1,5 +1,5 @@
 export { login, logout, validateToken } from "./auth";
-export { getListaDocumentos, generarPDF, crearDocumento } from "./documentos";
+export { getListaDocumentos, crearDocumento, generarPDF } from "./documentos";
 export {
   listarProductos,
   crearProducto,

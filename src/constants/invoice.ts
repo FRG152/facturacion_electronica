@@ -1,13 +1,12 @@
 export interface Factura {
   id: number;
   numeroFactura: string;
-  timbrado: string;
   estado: "PENDIENTE" | "ENVIADO" | "RECHAZADO" | "APROBADO";
   cdc: string;
   lote: string;
   estadoLote: "PENDIENTE" | "ENVIADO" | "RECHAZADO" | "APROBADO";
   fechaCreacion: string;
-  xmlConQR?: string;
+  xml?: string;
 }
 
 export const estadoOptions = [

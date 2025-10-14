@@ -176,7 +176,7 @@ export interface DocumentoItem {
   fechaCreacion: string;
   fechaActualizacion: string;
   lote: Lote;
-  xmlConQR?: string;
+  xml?: string;
 }
 
 export interface ListarDocumentosParams {
