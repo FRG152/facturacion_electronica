@@ -3,21 +3,24 @@
  * Permite al usuario seleccionar la empresa con la que está trabajando
  * Persiste la selección en localStorage
  */
+import {
+  Select,
+  SelectItem,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+} from "./ui/select";
 
-import { useEffect } from "react";
-import { Building2 } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   fetchEmpresas,
   setEmpresaSeleccionada,
 } from "../store/slices/empresasSlice";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
+
+import { useEffect } from "react";
+
+import { Building2 } from "lucide-react";
+
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 export function EmpresaSelector() {
   const dispatch = useAppDispatch();
@@ -25,12 +28,10 @@ export function EmpresaSelector() {
     (state) => state.empresas
   );
 
-  // Cargar empresas activas al montar el componente
   useEffect(() => {
     dispatch(fetchEmpresas({ activo: 1 }));
   }, [dispatch]);
 
-  // Restaurar empresa seleccionada desde localStorage
   useEffect(() => {
     const empresaId = localStorage.getItem("empresa_id");
     if (empresaId && empresas.length > 0 && !empresaSeleccionada) {
@@ -41,7 +42,6 @@ export function EmpresaSelector() {
     }
   }, [empresas, empresaSeleccionada, dispatch]);
 
-  // Si solo hay una empresa, seleccionarla automáticamente
   useEffect(() => {
     if (empresas.length === 1 && !empresaSeleccionada) {
       dispatch(setEmpresaSeleccionada(empresas[0] || null));

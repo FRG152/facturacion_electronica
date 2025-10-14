@@ -188,9 +188,7 @@ export function ProductoForm() {
                   placeholder="Nombre del producto"
                 />
                 {errors.nombre && (
-                  <p className="form-error">
-                    {errors.nombre.message}
-                  </p>
+                  <p className="form-error">{errors.nombre.message}</p>
                 )}
               </div>
 
@@ -202,9 +200,7 @@ export function ProductoForm() {
                   placeholder="Código de barras"
                 />
                 {errors.codigo_barras && (
-                  <p className="form-error">
-                    {errors.codigo_barras.message}
-                  </p>
+                  <p className="form-error">{errors.codigo_barras.message}</p>
                 )}
               </div>
             </div>
@@ -217,9 +213,7 @@ export function ProductoForm() {
                 placeholder="Descripción del producto"
               />
               {errors.descripcion && (
-                <p className="form-error">
-                  {errors.descripcion.message}
-                </p>
+                <p className="form-error">{errors.descripcion.message}</p>
               )}
             </div>
 
@@ -245,9 +239,7 @@ export function ProductoForm() {
                   )}
                 />
                 {errors.unidad_medida && (
-                  <p className="form-error">
-                    {errors.unidad_medida.message}
-                  </p>
+                  <p className="form-error">{errors.unidad_medida.message}</p>
                 )}
               </div>
 
@@ -287,9 +279,7 @@ export function ProductoForm() {
                   placeholder="0.00"
                 />
                 {errors.precio_compra && (
-                  <p className="form-error">
-                    {errors.precio_compra.message}
-                  </p>
+                  <p className="form-error">{errors.precio_compra.message}</p>
                 )}
               </div>
 
@@ -304,9 +294,7 @@ export function ProductoForm() {
                   placeholder="0.00"
                 />
                 {errors.precio_venta1 && (
-                  <p className="form-error">
-                    {errors.precio_venta1.message}
-                  </p>
+                  <p className="form-error">{errors.precio_venta1.message}</p>
                 )}
               </div>
             </div>
