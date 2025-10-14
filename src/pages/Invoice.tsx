@@ -345,6 +345,7 @@ export function Facturas() {
               text-align: center; 
               font-weight: bold; 
               margin-bottom: 10px;
+              border-radius: 10px;
               background-color: #dc3545; 
             }
             
@@ -407,6 +408,8 @@ export function Facturas() {
             
             .invoice-number { 
               color: #000; 
+              font-size: 14px;
+              font-weight: bold;
             }
             
             .info-section { 
@@ -467,11 +470,11 @@ export function Facturas() {
             .tax-summary { 
               color: white; 
               height: 32px; 
-              border: 2px solid #000;
               font-size: 11px; 
               text-align: right; 
               font-weight: bold; 
               padding-right: 8px; 
+              border-radius: 10px;
               background-color: #6c757d; 
             }
             
@@ -479,6 +482,7 @@ export function Facturas() {
               border: 2px solid #000; 
               padding: 15px; 
               margin-top: 10px; 
+              border-radius: 10px;
               background-color: #fff; 
             }
             
@@ -489,19 +493,6 @@ export function Facturas() {
               width: 30%; 
               text-align: center; 
               padding-right: 15px; 
-            }
-            
-            .qr-placeholder { 
-              width: 120px; 
-              height: 120px; 
-              background-color: #fff; 
-              border: 2px solid #000; 
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: bold; 
-              font-size: 14px;
-              margin: 0 auto;
             }
             
             .verification-section { 
@@ -516,16 +507,16 @@ export function Facturas() {
             }
             
             .cdc-display { 
-              font-size: 10px; 
-              font-weight: bold; 
-              text-align: center; 
               margin: 12px 0; 
-              letter-spacing: 1px; 
               padding: 10px 0 21px 0; 
-              background-color: #f8f9fa; 
-              font-family: 'Courier New', monospace; 
               word-wrap: break-word;
-              border: 1px solid #ddd;
+              font-size: 10px; 
+              text-align: center; 
+              font-weight: bold; 
+              font-family: 'Courier New', monospace; 
+              border-radius: 10px;
+              letter-spacing: 1px; 
+              background-color: #f8f9fa; 
             }
             
             .logo-placeholder {
@@ -538,6 +529,20 @@ export function Facturas() {
               align-items: center;
               justify-content: center;
               background-color: #f0f0f0;
+            }
+
+            .legal-footer {
+              color: white;
+              height: 30px;
+              padding-bottom: 10px;
+              font-size: 8px; 
+              text-align: center; 
+              margin-top: 10px;
+              border-radius: 10px;
+              background-color: #2c3e50;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
           </style>
         </head>
@@ -687,20 +692,33 @@ export function Facturas() {
             <div class="footer-section">
               <table>
                 <tr>
+
                   <td class="qr-section">
                      <img src="${qrCodeDataURL}" alt="QR" width="120" height="120" />
                   </td>
+
                   <td class="verification-section">
+
                     <strong>Consulte esta Factura Electrónica con el número impreso abajo:</strong><br>
+
                     <span class="verification-url">https://ekuatia.set.gov.py/consultas/</span>
+
                     <div class="cdc-display">${cdcFormateado}</div>
+
                     <div style="text-align: center; font-weight: bold; font-size: 10px; margin-top: 10px;">
                       ESTE DOCUMENTO ES UNA REPRESENTACIÓN GRÁFICA DE UN<br>DOCUMENTO ELECTRÓNICO (XML)
                     </div>
+
                   </td>
+
                 </tr>
               </table>
             </div>
+
+            <div class="legal-footer">
+              Si su documento electrónico presenta algún error puede solicitar la modificación dentro de las 72 horas siguientes de la emisión de este comprobante.
+            </div>
+
           </div>
         </body>
         </html>
