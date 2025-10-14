@@ -1,15 +1,16 @@
 import {
   Home,
   Users,
+  Search,
   LogOut,
   Package,
+  FileKey,
   FileText,
   Settings,
-  PlusCircle,
   Building2,
-  FileKey,
-  Search,
+  PlusCircle,
 } from "lucide-react";
+
 import {
   Sidebar,
   SidebarItem,
@@ -18,11 +19,13 @@ import {
   SidebarHeader,
   SidebarContent,
 } from "./ui/sidebar";
+
 import { logoutUser } from "../store/slices/authSlice";
 import { sidebarItems } from "../constants/sidebar";
+import { EmpresaSelector } from "./EmpresaSelector";
+
 import { Link, useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { EmpresaSelector } from "./EmpresaSelector";
 
 const iconMap = {
   Home,
@@ -54,8 +57,7 @@ const SidebarComponent = () => {
         </div>
       </SidebarHeader>
 
-      {/* Selector de empresa activa */}
-      <div className="border-b pb-3 mb-3">
+      <div className="border-b py-1">
         <EmpresaSelector />
       </div>
 
@@ -96,6 +98,6 @@ const SidebarComponent = () => {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
 
 export default SidebarComponent;

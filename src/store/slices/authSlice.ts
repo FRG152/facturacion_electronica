@@ -1,13 +1,15 @@
 import {
-  createSlice,
-  createAsyncThunk,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
-import {
   login as loginApi,
   logout as logoutApi,
   validateToken,
 } from "../../api";
+
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+
 import type { LoginFormData, User } from "../../schemas/auth/login";
 
 interface AuthState {
@@ -56,7 +58,9 @@ export const logoutUser = createAsyncThunk(
       // Limpiar de todas formas
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
-      return rejectWithValue("Error al cerrar sesión. La sesión se cerró localmente");
+      return rejectWithValue(
+        "Error al cerrar sesión. La sesión se cerró localmente"
+      );
     }
   }
 );
@@ -85,7 +89,9 @@ export const checkAuth = createAsyncThunk(
     } catch (error) {
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
-      return rejectWithValue("Su sesión ha expirado. Por favor, inicie sesión nuevamente");
+      return rejectWithValue(
+        "Su sesión ha expirado. Por favor, inicie sesión nuevamente"
+      );
     }
   }
 );

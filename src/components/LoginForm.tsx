@@ -1,36 +1,34 @@
-import { useState, useEffect } from "react";
-
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 import { useForm } from "react-hook-form";
+
+import { loginUser } from "../store/slices/authSlice";
+
 import { useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useState, useEffect } from "react";
+
 import { Eye, EyeOff, FileText } from "lucide-react";
 
-import { loginSchema, type LoginFormData } from "../schemas/auth/login";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { loginUser, clearError } from "../store/slices/authSlice";
+
+import { loginSchema, type LoginFormData } from "../schemas/auth/login";
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { error, isAuthenticated } = useAppSelector((state) => state.auth);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(clearError());
-    };
-  }, [dispatch]);
 
   const {
     register,

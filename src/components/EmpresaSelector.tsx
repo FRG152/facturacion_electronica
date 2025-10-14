@@ -1,8 +1,3 @@
-/**
- * Componente selector de empresa activa
- * Permite al usuario seleccionar la empresa con la que está trabajando
- * Persiste la selección en localStorage
- */
 import {
   Select,
   SelectItem,

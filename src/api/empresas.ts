@@ -56,7 +56,9 @@ export const listarEmpresas = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const queryParams = new URLSearchParams();
@@ -100,7 +102,9 @@ export const obtenerEmpresaPorId = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(`${API_BASE_URL}/empresas/${id}`, {
@@ -136,7 +140,9 @@ export const actualizarEmpresa = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(`${API_BASE_URL}/empresas/${id}`, {
@@ -172,7 +178,9 @@ export const eliminarEmpresa = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(`${API_BASE_URL}/empresas/${id}`, {
@@ -207,7 +215,9 @@ export const toggleEmpresaStatus = async (
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(
@@ -240,14 +250,14 @@ export const toggleEmpresaStatus = async (
  * PATCH /api/empresas/:id/regenerate-token
  * Requiere X-API-Token
  */
-export const regenerarToken = async (
-  id: number
-): Promise<EmpresaResponse> => {
+export const regenerarToken = async (id: number): Promise<EmpresaResponse> => {
   try {
     const apiToken = getApiToken();
 
     if (!apiToken) {
-      throw new Error("No hay empresa seleccionada o el token no está disponible");
+      throw new Error(
+        "No hay empresa seleccionada o el token no está disponible"
+      );
     }
 
     const response = await fetch(
@@ -263,9 +273,7 @@ export const regenerarToken = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(
-        errorData.message || "Error al regenerar token"
-      );
+      throw new Error(errorData.message || "Error al regenerar token");
     }
 
     return await response.json();

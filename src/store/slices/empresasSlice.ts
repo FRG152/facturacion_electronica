@@ -2,22 +2,29 @@
  * Redux Slice para gestión de empresas
  */
 
-import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
+
 import type {
   Empresa,
   CrearEmpresaDTO,
-  ActualizarEmpresaDTO,
-  ListarEmpresasParams,
   PaginacionEmpresas,
+  ListarEmpresasParams,
+  ActualizarEmpresaDTO,
 } from "../../interfaces/empresas";
+
 import {
   crearEmpresa as crearEmpresaAPI,
   listarEmpresas as listarEmpresasAPI,
-  obtenerEmpresaPorId as obtenerEmpresaPorIdAPI,
-  actualizarEmpresa as actualizarEmpresaAPI,
   eliminarEmpresa as eliminarEmpresaAPI,
+  actualizarEmpresa as actualizarEmpresaAPI,
+  obtenerEmpresaPorId as obtenerEmpresaPorIdAPI,
   toggleEmpresaStatus as toggleEmpresaStatusAPI,
 } from "../../api/empresas";
+
 import { setEmpresaActiva, clearEmpresaActiva } from "../../utils/authHelpers";
 
 // Estado inicial
