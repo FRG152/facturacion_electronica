@@ -1,41 +1,52 @@
-import { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import {
-  fetchProductos,
-  searchProductos,
-  deleteProducto,
-  clearError,
-} from "../store/slices/productosSlice";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Badge } from "./ui/badge";
 import {
   Table,
+  TableRow,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from "./ui/table";
+
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import {
-  Search,
   Plus,
   Edit,
   Trash2,
+  Search,
   Package,
   AlertTriangle,
 } from "lucide-react";
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
+  DialogContent,
+  DialogDescription,
+} from "./ui/dialog";
+
+import {
+  clearError,
+  fetchProductos,
+  deleteProducto,
+  searchProductos,
+} from "../store/slices/productosSlice";
+
 import { Link } from "react-router-dom";
+
 import { toast } from "sonner";
+
+import { Badge } from "./ui/badge";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+
+import ModalImage from "react-modal-image";
+
+import { useState, useEffect } from "react";
+
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export function ProductosList() {
   const dispatch = useAppDispatch();
@@ -97,7 +108,10 @@ export function ProductosList() {
         setProductoToDelete(null);
       } catch (error) {
         toast.error("Error al eliminar", {
-          description: error instanceof Error ? error.message : "No se pudo eliminar el producto",
+          description:
+            error instanceof Error
+              ? error.message
+              : "No se pudo eliminar el producto",
           duration: 5000,
         });
       }
@@ -200,8 +214,10 @@ export function ProductosList() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Imagen</TableHead>
                   <TableHead>Nombre</TableHead>
                   <TableHead>Precio de Venta</TableHead>
+                  <TableHead>Precio Compra</TableHead>
                   <TableHead>IVA</TableHead>
                   <TableHead>Stock</TableHead>
                   <TableHead>Código de Barras</TableHead>
@@ -217,6 +233,20 @@ export function ProductosList() {
                   return (
                     <TableRow key={producto.id_producto}>
                       <TableCell>
+                        {producto.imagen1 ? (
+                          <ModalImage
+                            small={producto.imagen1}
+                            large={producto.imagen1}
+                            alt="imagen 1"
+                            className={"w-15 h-15"}
+                          />
+                        ) : (
+                          <div>-</div>
+                        )}
+                      </TableCell>
+
+                      {/* Nombre / Descripcion */}
+                      <TableCell>
                         <div>
                           <div className="font-medium">{producto.nombre}</div>
                           {producto.descripcion && (
@@ -226,6 +256,8 @@ export function ProductosList() {
                           )}
                         </div>
                       </TableCell>
+
+                      {/* Precio Venta */}
                       <TableCell>
                         <div className="font-medium">
                           {formatPrice(producto.precio_venta1)}
@@ -236,25 +268,37 @@ export function ProductosList() {
                           </div>
                         )}
                       </TableCell>
+
+                      {/* Precio Compra */}
+                      <TableCell>
+                        <div className="font-medium">
+                          {formatPrice(producto.precio_compra)}
+                        </div>
+                      </TableCell>
+
+                      {/* IVA */}
                       <TableCell>
                         <Badge variant="outline">{producto.iva}%</Badge>
                       </TableCell>
+
+                      {/* Stock */}
                       <TableCell>
                         <Badge variant={stockStatus.variant}>
                           {stockStatus.label}
                         </Badge>
                       </TableCell>
+
+                      {/* Codigo de barra */}
                       <TableCell>
                         {producto.codigo_barras ? (
                           <code className="code-block">
                             {producto.codigo_barras}
                           </code>
                         ) : (
-                          <span className="text-secondary">
-                            -
-                          </span>
+                          <span className="text-secondary">-</span>
                         )}
                       </TableCell>
+
                       <TableCell>
                         <div className="flex gap-2">
                           <Link

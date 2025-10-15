@@ -5,11 +5,11 @@
 
 import type {
   CrearEmpresaDTO,
+  EmpresaResponse,
   ActualizarEmpresaDTO,
   ListarEmpresasParams,
-  ListarEmpresasResponse,
-  EmpresaResponse,
   DeleteEmpresaResponse,
+  ListarEmpresasResponse,
 } from "../interfaces/empresas";
 import { getApiToken } from "../utils/authHelpers";
 
@@ -101,6 +101,7 @@ export const obtenerEmpresaPorId = async (
   try {
     const apiToken = getApiToken();
 
+    console.log(apiToken);
     if (!apiToken) {
       throw new Error(
         "No hay empresa seleccionada o el token no está disponible"

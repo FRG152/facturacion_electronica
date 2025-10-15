@@ -250,7 +250,7 @@ export function CustomerSearchModal({
           </TabsContent>
 
           <TabsContent value="crear" className="flex-1 mt-4 overflow-y-auto">
-            <div className="pr-2">
+            <div className="px-1">
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
                   <strong>Creación rápida:</strong> Completa los campos

@@ -52,12 +52,9 @@ export const setEmpresaActiva = (empresa: Empresa): void => {
   try {
     localStorage.setItem(EMPRESA_ACTIVA_KEY, JSON.stringify(empresa));
 
-    // También guardar el token directamente para acceso rápido
     if (empresa.api_token) {
       localStorage.setItem(API_TOKEN_KEY, empresa.api_token);
     }
-
-    console.log("Empresa activa guardada:", empresa.nombre);
   } catch (error) {
     console.error("Error al guardar empresa activa:", error);
   }
