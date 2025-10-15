@@ -72,21 +72,17 @@ export const checkAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("auth_token");
+
       if (!token) {
         return null;
+      } else {
+        const user_data = localStorage.getItem("user_data");
+        return JSON.parse(user_data || "") as User;
       }
 
-      const isValid = await validateToken();
-      if (isValid) {
-        const userData = localStorage.getItem("user_data");
-        if (userData) {
-          return JSON.parse(userData) as User;
-        }
-      }
-
-      // Si el token no es válido, limpiar el localStorage
-      localStorage.removeItem("auth_token");
-      localStorage.removeItem("user_data");
+      // // Si el token no es válido, limpiar el localStorage
+      // localStorage.removeItem("auth_token");
+      // localStorage.removeItem("user_data");
       return null;
     } catch (error) {
       localStorage.removeItem("auth_token");

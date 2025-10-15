@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { checkAuth } from "./store/slices/authSlice";
 
 import { Toaster } from "./components/ui/sonner";
+import LogoutModal from "./components/Modals/LogoutModal";
 import SidebarComponent from "./components/SidebarComponent";
 
 import { Login } from "./pages/Login";
@@ -26,7 +27,6 @@ import { ConfigurarEmisor } from "./pages/ConfigurarEmisor";
 import { ConsultasDocumentos } from "./pages/ConsultasDocumentos";
 
 import { useAppDispatch, useAppSelector } from "./store/hooks";
-import LogoutModal from "./components/Modals/LogoutModal";
 
 function AppContent() {
   const dispatch = useAppDispatch();
