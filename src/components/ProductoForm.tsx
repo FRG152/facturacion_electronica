@@ -131,7 +131,6 @@ export function ProductoForm() {
   const onSubmit = async (
     data: CreateProductoFormData | UpdateProductoFormData
   ) => {
-    console.log("data:", data);
     try {
       if (isEditing && id) {
         await dispatch(
@@ -155,7 +154,10 @@ export function ProductoForm() {
     } catch (error) {
       console.error("Error al guardar producto:", error);
       toast.error("Error al guardar", {
-        description: error instanceof Error ? error.message : "Ocurrió un error al guardar el producto",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Ocurrió un error al guardar el producto",
         duration: 5000,
       });
     }

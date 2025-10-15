@@ -112,7 +112,7 @@ function transformCliente(cliente: any): InvoiceCliente {
       );
     }
 
-    documentoNumero = ruc.split("-")[0]; // Extraer solo la parte numérica (sin DV)
+    documentoNumero = ruc.split("-")[0] || ""; // Extraer solo la parte numérica (sin DV)
   } else {
     // Persona Física: puede tener RUC o solo CI
     const tieneRuc =
@@ -129,7 +129,7 @@ function transformCliente(cliente: any): InvoiceCliente {
         );
       }
 
-      documentoNumero = ruc.split("-")[0]; // Extraer solo la parte numérica (sin DV)
+      documentoNumero = ruc.split("-")[0] || ""; // Extraer solo la parte numérica (sin DV)
     } else if (cliente.ci) {
       // Solo tiene CI: usar CI como documento
       documentoNumero = cliente.ci.replace(/[^0-9]/g, "");

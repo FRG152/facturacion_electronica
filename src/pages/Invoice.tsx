@@ -237,6 +237,7 @@ export function Facturas() {
 
       for (let i = 0; i < itemNodes.length; i++) {
         const item = itemNodes[i];
+        if (!item) continue;
         const getItemValue = (tag: string) =>
           item.getElementsByTagName(tag)[0]?.textContent?.trim() || "";
 
@@ -731,9 +732,9 @@ export function Facturas() {
       const opt = {
         margin: 10,
         filename: `Factura_KuDE_${documento.establecimiento}-${documento.puntoExpedicion}-${documento.numero}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
+        image: { type: "jpeg" as const, quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
       };
 
       html2pdf()

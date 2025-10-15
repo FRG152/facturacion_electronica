@@ -97,19 +97,19 @@ export function mapUnidadMedidaToCode(unidad: string): number {
   // Tabla de códigos de unidades de medida según SET Paraguay
   // Códigos corregidos según documentación oficial de la API
   const codigosUnidad: Record<string, number> = {
-    UNI: 77,    // Unidad
-    KG: 83,     // Kilogramo
-    L: 89,      // Litro
-    M: 87,      // Metro
-    M2: 109,    // Metro cuadrado
-    M3: 110,    // Metro cúbico
-    GR: 86,     // Gramo
-    HR: 100,    // Hora
-    MIN: 101,   // Minuto
-    SEG: 666,   // Segundo
-    KM: 625,    // Kilómetro
-    CM: 91,     // Centímetro
-    MM: 95,     // Milímetro
+    UNI: 77, // Unidad
+    KG: 83, // Kilogramo
+    L: 89, // Litro
+    M: 87, // Metro
+    M2: 109, // Metro cuadrado
+    M3: 110, // Metro cúbico
+    GR: 86, // Gramo
+    HR: 100, // Hora
+    MIN: 101, // Minuto
+    SEG: 666, // Segundo
+    KM: 625, // Kilómetro
+    CM: 91, // Centímetro
+    MM: 95, // Milímetro
   };
 
   return codigosUnidad[unidadUpper] || 77; // Por defecto: Unidad
@@ -129,7 +129,10 @@ export function mapUnidadMedidaToCode(unidad: string): number {
  * normalizarTelefono("021123456", "PY")  // returns "59521123456"
  * normalizarTelefono("+595981123456")    // returns "595981123456"
  */
-export function normalizarTelefono(telefono: string, pais: string = "PY"): string {
+export function normalizarTelefono(
+  telefono: string,
+  pais: string = "PY"
+): string {
   if (!telefono || telefono.trim() === "") {
     return "";
   }
@@ -183,9 +186,9 @@ export function calcularDVRuc(rucBase: string): number {
   const digitos = baseNumeros.split("").reverse();
 
   for (let i = 0; i < digitos.length; i++) {
-    const digito = parseInt(digitos[i], 10);
+    const digito = parseInt(digitos[i] || "0", 10);
     const peso = pesos[i % pesos.length];
-    suma += digito * peso;
+    suma += digito * (peso || 0);
   }
 
   const resto = suma % 11;
@@ -210,7 +213,7 @@ export function validarRuc(ruc: string): { valido: boolean; error?: string } {
   if (!ruc || ruc.trim() === "") {
     return {
       valido: false,
-      error: "El RUC es requerido para emitir la factura"
+      error: "El RUC es requerido para emitir la factura",
     };
   }
 
@@ -221,7 +224,8 @@ export function validarRuc(ruc: string): { valido: boolean; error?: string } {
   if (!rucLimpio.includes("-")) {
     return {
       valido: false,
-      error: "El RUC debe incluir el dígito verificador en el formato: XXXXXXXX-Y"
+      error:
+        "El RUC debe incluir el dígito verificador en el formato: XXXXXXXX-Y",
     };
   }
 
@@ -230,36 +234,36 @@ export function validarRuc(ruc: string): { valido: boolean; error?: string } {
   if (partes.length !== 2) {
     return {
       valido: false,
-      error: "El formato del RUC es incorrecto. Use el formato: XXXXXXXX-Y"
+      error: "El formato del RUC es incorrecto. Use el formato: XXXXXXXX-Y",
     };
   }
 
   const [base, dvStr] = partes;
 
   // Validar que la base sea numérica y tenga longitud adecuada (7-8 dígitos)
-  if (!/^\d{7,8}$/.test(base)) {
+  if (!/^\d{7,8}$/.test(base || "")) {
     return {
       valido: false,
-      error: "La parte numérica del RUC debe contener entre 7 y 8 dígitos"
+      error: "La parte numérica del RUC debe contener entre 7 y 8 dígitos",
     };
   }
 
   // Validar que el DV sea numérico y de un solo dígito
-  if (!/^\d$/.test(dvStr)) {
+  if (!/^\d$/.test(dvStr || "0")) {
     return {
       valido: false,
-      error: "El dígito verificador debe ser un número entre 0 y 9"
+      error: "El dígito verificador debe ser un número entre 0 y 9",
     };
   }
 
   // Calcular el DV esperado
-  const dvEsperado = calcularDVRuc(base);
-  const dvRecibido = parseInt(dvStr, 10);
+  const dvEsperado = calcularDVRuc(base || "");
+  const dvRecibido = parseInt(dvStr || "0", 10);
 
   if (dvEsperado !== dvRecibido) {
     return {
       valido: false,
-      error: `El dígito verificador del RUC es incorrecto. El dígito correcto es: ${dvEsperado}`
+      error: `El dígito verificador del RUC es incorrecto. El dígito correcto es: ${dvEsperado}`,
     };
   }
 
@@ -293,7 +297,7 @@ export function formatearRuc(ruc: string): string {
       return rucLimpio;
     }
     // Si no es válido, intentar reconstruirlo
-    const base = rucLimpio.split("-")[0].replace(/[^0-9]/g, "");
+    const base = rucLimpio.split("-")[0]?.replace(/[^0-9]/g, "") || "";
     if (base.length >= 7) {
       const dv = calcularDVRuc(base);
       return `${base}-${dv}`;
@@ -325,5 +329,5 @@ export function formatearRuc(ruc: string): string {
 export function formatDateForSET(date: Date = new Date()): string {
   // Convertir a ISO string y remover milisegundos (.XXX) y zona horaria (Z)
   // "2025-10-13T22:35:11.496Z" -> "2025-10-13T22:35:11"
-  return date.toISOString().split('.')[0];
+  return date.toISOString().split(".")[0] || "";
 }
