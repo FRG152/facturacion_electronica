@@ -492,7 +492,7 @@
   }
 
   .logo {
-    @apply mx-auto h-16 w-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-lg;
+    @apply mx-auto bg-gradient-to-br rounded-2xl flex items-center justify-center;
   }
 
   .logo_icon {

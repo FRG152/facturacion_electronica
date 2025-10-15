@@ -31,7 +31,10 @@ const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps>(
   ({ className, children, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("flex h-16 items-center border-b px-4", className)}
+      className={cn(
+        "flex h-30 items-center justify-center border-b px-4",
+        className
+      )}
       {...props}
     >
       {children}

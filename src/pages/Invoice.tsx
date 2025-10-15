@@ -556,7 +556,7 @@ export function Facturas() {
 
                   <td class="header-left">
                     <div class="logo-placeholder">
-                      LOGO<br>EMPRESA
+                      <img src="/logo.jpg" alt="Logo" />
                     </div>
                   </td>
 

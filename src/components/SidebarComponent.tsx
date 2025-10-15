@@ -51,8 +51,7 @@ const SidebarComponent = () => {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <FileText className="h-6 w-6" />
-          <span className="font-semibold">Facturación</span>
+          <img src="/logo.jpg" alt="Logo" className="h-25 w-25" />
         </div>
       </SidebarHeader>
 

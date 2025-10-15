@@ -9,9 +9,9 @@ import { useNavigate } from "react-router-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useState, useEffect } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
-import { Eye, EyeOff, FileText } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
@@ -51,7 +51,7 @@ export function LoginForm() {
       <div className="content_login">
         <div className="text-center">
           <div className="logo">
-            <FileText className="h-8 w-8 text-white" />
+            <img src="/logo.jpg" alt="Logo" className="h-50 w-50" />
           </div>
           <h1>Facturación Electrónica</h1>
           <h2>Inicia sesión en tu cuenta</h2>
