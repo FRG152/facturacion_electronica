@@ -1,8 +1,4 @@
-import {
-  login as loginApi,
-  logout as logoutApi,
-  validateToken,
-} from "../../api";
+import { login as loginApi, logout as logoutApi } from "../../api";
 
 import {
   createSlice,
